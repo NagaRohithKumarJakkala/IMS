@@ -16,17 +16,17 @@ This is for the Course DBMS-II Project
 
 ## Prerequisites
 
-have to added later
+have to be added later
 
 ## installation:
 
-- clone repo from github
+- clone repo from GitHub
 
 ```
 git clone git@github.com:NagaRohithKumarJakkala/DasIsBadAss.git
 ```
 
-- go to project folder and run these commands
+- go to the project folder and run these commands
 
 ```
 cd services/backend
@@ -134,7 +134,7 @@ for fixes:
 Contributors:
 
 - [Naga Rohith Kumar Jakkala](https://github.com/NagaRohithKumarJakkala)
-- [Sai Kaushik K](https://github.com/saikaushhikp)
+- [Sai Kaushik P](https://github.com/saikaushhikp)
 - [Vishal Varukolu](https://github.com/Vishal45187)
 - [Sairam Suhas Muvvala](https://github.com/suhas-1012)
 
