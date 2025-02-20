@@ -1,6 +1,22 @@
-# DasIsBadAss
+# IMS(Inventory Management System)
 
 This is for the Course DBMS-II Project
+
+## Table of Contents:
+
+- [Prerequisites](#Prerequisites)
+- [installation](#installation)
+- [Usage](#Usage)
+- [Git Instructions](#GitInstructions)
+- [frontend readme](services/frontend/README.md)
+- [backend readme](services/backend/readme.md)
+- [credits](#Credits)
+- [License](#License)
+- [Third party licenses](#Third-Party-Licenses)
+
+## Prerequisites
+
+have to added later
 
 ## installation:
 
@@ -37,8 +53,10 @@ go run main.go
 
 ```
 
+- and do the following to ensure your frontend installation:
+
 ```
-cd ../services/frontend
+cd services/frontend
 
 npm install
 
@@ -46,7 +64,11 @@ npm run dev
 
 ```
 
-## helpful git instructions to follow:
+## Usage
+
+have to be added later
+
+## GitInstructions:
 
 - git basic instructions to do:
 
@@ -81,7 +103,13 @@ git push origin <branch_name>
 ```
 git checkout main
 
+git pull
+
 git branch -d <branch_name>
+
+# i am not sure if this is necessary or not
+
+git pull
 
 ```
 
@@ -100,3 +128,23 @@ for fixes:
 ```
     git checkout -b fixes/bug_name
 ```
+
+## Credits
+
+Contributors:
+
+- [Naga Rohith Kumar Jakkala](https://github.com/NagaRohithKumarJakkala)
+- [Sai Kaushik K](https://github.com/saikaushhikp)
+- [Vishal Varukolu](https://github.com/Vishal45187)
+- [Sairam Suhas Muvvala](https://github.com/suhas-1012)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Third-Party-Licenses
+
+This project uses the following third-party libraries:
+
+- Library1 (MIT License)
+- Library2 (Apache 2.0 License)
