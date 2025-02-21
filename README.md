@@ -22,31 +22,31 @@ have to be added later
 
 - clone repo from GitHub
 
-```
+```bash
 git clone git@github.com:NagaRohithKumarJakkala/DasIsBadAss.git
 ```
 
 - go to the project folder and run these commands
 
-```
+```bash
 cd services/backend
 ```
 
 - and keep your .env in this folder with variable DB_URL in it in the format:
 
-```
+```bash
 <username>:<password>@tcp(<url:port>)/<db_name>
 ```
 
 - example .env:
 
-```
+```bash
 DB_URL = "root:root@tcp(127.0.0.1:3306)/test"
 ```
 
 - and do the following to ensure your backend installation:
 
-```
+```bash
 go get .
 
 go run main.go
@@ -55,7 +55,7 @@ go run main.go
 
 - and do the following to ensure your frontend installation:
 
-```
+```bash
 cd services/frontend
 
 npm install
@@ -72,7 +72,7 @@ have to be added later
 
 - git basic instructions to do:
 
-```
+```bash
 # before every add/commit ensure you do
 
 git pull
@@ -100,7 +100,7 @@ git push origin <branch_name>
 
 - then delete the branch which you created in github and delete in local repo using these commands:
 
-```
+```bash
 git checkout main
 
 git pull
@@ -119,13 +119,13 @@ git pull
 - to create branch :
   for feature:
 
-```
+```bash
     git checkout -b feature/feature_name
 ```
 
 for fixes:
 
-```
+```bash
     git checkout -b fixes/bug_name
 ```
 
