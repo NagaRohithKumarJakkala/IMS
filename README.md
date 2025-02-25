@@ -145,6 +145,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Third-Party-Licenses
 
 This project uses the following third-party libraries:
-
-- Library1 (MIT License)
-- Library2 (Apache 2.0 License)
+- will add it later
