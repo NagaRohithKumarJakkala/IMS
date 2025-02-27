@@ -23,7 +23,7 @@ have to be added later
 - clone repo from GitHub
 
 ```bash
-git clone git@github.com:NagaRohithKumarJakkala/DasIsBadAss.git
+git clone git@github.com:NagaRohithKumarJakkala/IMS.git
 ```
 
 - go to the project folder and run these commands
