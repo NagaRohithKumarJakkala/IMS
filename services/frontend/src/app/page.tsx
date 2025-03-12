@@ -1,3 +1,4 @@
+import HomePage from "../pages/homepage/homepage";
 export default function Home() {
-  return <div className="hello">hello world</div>;
+  return <HomePage />;
 }
