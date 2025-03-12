@@ -1,7 +1,17 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Menu } from "lucide-react";
+import clsx from "clsx";
 
 const NavBar = () => {
+  const [isVisible, setVisible] = useState(0);
+  function showmenu(): void {
+    if (isVisible == 0) {
+      setVisible(1);
+    } else {
+      setVisible(0);
+    }
+  }
   return (
     <div
       id="nav"
@@ -32,7 +42,29 @@ const NavBar = () => {
           </a>
         </div>
       </div>
-      <Menu className="block m-4 sm:hidden" />
+      <Menu className="block m-4 sm:hidden" onClick={showmenu} />
+      <div
+        className={clsx(
+          isVisible ? "block" : "hidden",
+          " absolute right-4 top-16 border border-white rounded bg-black",
+        )}
+      >
+        <a href="./" className="block border p-4 border-white ">
+          Home
+        </a>
+        <a href="./" className="block border p-4 border-white ">
+          Templates
+        </a>
+        <a href="./" className="block border p-4  border-white ">
+          Github
+        </a>
+        <a href="./" className="block border p-4 border-white ">
+          About
+        </a>
+        <a href="./" className="block border p-4 border-white ">
+          SignUP/Login
+        </a>
+      </div>
     </div>
   );
 };
