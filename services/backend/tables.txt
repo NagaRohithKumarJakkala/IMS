@@ -8,6 +8,7 @@ CREATE TABLE Product_Table (
     product_id VARCHAR(16) PRIMARY KEY,
     product_name VARCHAR(128),
     manufacturer_id INT,
+    description VARCHAR(512),
     FOREIGN KEY (manufacturer_id) REFERENCES Manufacture_Table(manufacturer_id) ON DELETE CASCADE
 );
 
@@ -15,6 +16,7 @@ CREATE TABLE Cost_Table (
     product_id VARCHAR(16),
     cost_of_item DECIMAL(10,2),
     mrp DECIMAL(10,2),
+    SP DECIMAL(10,2),
     PRIMARY KEY (product_id),
     FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 );
@@ -30,7 +32,6 @@ CREATE TABLE Selling_Table (
 CREATE TABLE Category_Table (
     product_id VARCHAR(16) PRIMARY KEY,
     category VARCHAR(64),
-    description VARCHAR(512),
     FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 );
 
@@ -57,5 +58,4 @@ CREATE TABLE user_log (
     logout_time DATETIME,
     FOREIGN KEY (user_id) REFERENCES user_level_table(user_id) ON DELETE CASCADE
 );
-
 
