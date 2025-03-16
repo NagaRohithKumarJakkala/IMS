@@ -1,15 +1,14 @@
-CREATE TABLE Manufacture_Table (
-    Product_brand VARCHAR(32),
-    manufacturer_id INT PRIMARY KEY,
-    manufacturer_name VARCHAR(64)
+CREATE TABLE Seller_Table (
+    seller_id INT PRIMARY KEY,
+    seller_name VARCHAR(64)
 );
 
 CREATE TABLE Product_Table (
     product_id VARCHAR(16) PRIMARY KEY,
+    product_brand VARCHAR(32),
     product_name VARCHAR(128),
-    manufacturer_id INT,
     description VARCHAR(512),
-    FOREIGN KEY (manufacturer_id) REFERENCES Manufacture_Table(manufacturer_id) ON DELETE CASCADE
+    FOREIGN KEY (seller_id) REFERENCES Seller_Table(seller_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Cost_Table (
@@ -38,8 +37,9 @@ CREATE TABLE Category_Table (
 
 CREATE TABLE Duration_Table (
     product_id VARCHAR(16),
+    seller_id INT,
     manufactured_date DATE,
-    duration_value INT,  -- Stores the numeric duration (e.g., 5, 10, 2)
+    duration_value INT,
     duration_unit ENUM('D', 'M', 'Y'),
     quantity_of_item INT CHECK (quantity_of_item >= 0),
     PRIMARY KEY (product_id, manufactured_date),
