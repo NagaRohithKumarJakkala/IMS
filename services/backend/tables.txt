@@ -37,7 +37,8 @@ CREATE TABLE Category_Table (
 CREATE TABLE Duration_Table (
     product_id VARCHAR(16),
     manufactured_date DATE,
-    duration_of_expiry TIME,
+    duration_value INT,  -- Stores the numeric duration (e.g., 5, 10, 2)
+    duration_unit ENUM('D', 'M', 'Y'),
     quantity_of_item INT CHECK (quantity_of_item >= 0),
     PRIMARY KEY (product_id, manufactured_date),
     FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
