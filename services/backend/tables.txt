@@ -7,7 +7,7 @@ CREATE TABLE Product_Table (
     product_id VARCHAR(16) PRIMARY KEY,
     product_brand VARCHAR(32),
     product_name VARCHAR(128),
-    description VARCHAR(512),
+    description VARCHAR(512)
 );
 
 CREATE TABLE Cost_Table (
