@@ -8,7 +8,6 @@ CREATE TABLE Product_Table (
     product_brand VARCHAR(32),
     product_name VARCHAR(128),
     description VARCHAR(512),
-    FOREIGN KEY (seller_id) REFERENCES Seller_Table(seller_id) ON DELETE CASCADE
 );
 
 CREATE TABLE Cost_Table (
