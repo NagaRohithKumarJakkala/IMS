@@ -10,23 +10,32 @@ CREATE TABLE Product_Table (
     description VARCHAR(512)
 );
 
-CREATE TABLE Cost_Table (
-    product_id VARCHAR(16),
-    cost_of_item DECIMAL(10,2),
-    mrp DECIMAL(10,2),
-    SP DECIMAL(10,2),
-    PRIMARY KEY (product_id),
-    FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
+CREATE TABLE Branch_Table( 
+    branch_id VARCHAR(16) PRIMARY KEY, 
+    branch_name VARCHAR(128)
 );
 
-CREATE TABLE Selling_Table (
-    order_id BIGINT AUTO_INCREMENT,
-    product_id VARCHAR(16),
-    quantity_of_item INT CHECK (quantity_of_item > 0),
-    selling_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    SP DECIMAL(10,2),
-    PRIMARY KEY (order_id, product_id),
-    FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
+CREATE TABLE Cost_Table ( 
+    branch_id VARCHAR(16), 
+    product_id VARCHAR(16), 
+    cost_of_item DECIMAL (10,2), 
+    mrp DECIMAL (10,2), 
+    SP DECIMAL (10,2), 
+    PRIMARY KEY (branch_id, product_id), 
+    FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE, 
+    FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE 
+); 
+
+CREATE TABLE Selling_Table ( 
+    order_id BIGINT AUTO_INCREMENT, 
+    product_id VARCHAR(16), 
+    quantity_of_item INT CHECK (quantity_of_item > 0), 
+    selling_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    branch_id VARCHAR(16), 
+    SP DECIMAL (10,2), 
+    PRIMARY KEY (order_id, product_id), 
+    FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE, 
+    FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE 
 );
 
 CREATE TABLE Category_Table (
