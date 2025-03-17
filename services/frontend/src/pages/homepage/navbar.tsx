@@ -25,7 +25,7 @@ const NavBar = () => {
           <a href="./" className="p-3">
             Home
           </a>
-          <a href="./" className="p-3">
+          <a href="./templates" className="p-3">
             Templates
           </a>
           <a
@@ -52,10 +52,13 @@ const NavBar = () => {
         <a href="./" className="block border p-4 border-white ">
           Home
         </a>
-        <a href="./" className="block border p-4 border-white ">
+        <a href="./templates" className="block border p-4 border-white ">
           Templates
         </a>
-        <a href="./" className="block border p-4  border-white ">
+        <a
+          href="https://github.com/NagaRohithKumarJakkala/IMS"
+          className="block border p-4  border-white "
+        >
           Github
         </a>
         <a href="./" className="block border p-4 border-white ">
