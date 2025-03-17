@@ -24,6 +24,7 @@ CREATE TABLE Selling_Table (
     product_id VARCHAR(16),
     quantity_of_item INT CHECK (quantity_of_item > 0),
     selling_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    SP DECIMAL(10,2),
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 );
