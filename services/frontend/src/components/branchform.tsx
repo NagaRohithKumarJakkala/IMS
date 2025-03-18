@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const BranchForm = ({ onSubmit }) => {
+const BranchForm = () => {
   const [formData, setFormData] = useState({
     branch_id: "",
     branch_name: "",
@@ -11,12 +11,25 @@ const BranchForm = ({ onSubmit }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (onSubmit) {
-      onSubmit(formData);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent page reload
+
+    const response = await fetch("http://localhost:8080/branches", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        branch_id: formData.branch_id,
+        branch_name: formData.branch_name,
+      }),
+    });
+
+    if (response.ok) {
+      alert("Branch added successfully!");
+    } else {
+      alert("Failed to add branch");
     }
-    setFormData({ branch_id: "", branch_name: "" });
   };
 
   return (

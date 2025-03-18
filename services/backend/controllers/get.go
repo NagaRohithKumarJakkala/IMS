@@ -7,5 +7,6 @@ import(
 func get(router *gin.Engine ){
     router.GET("/create-tables", models.CreateTables)
     router.GET("/get-products", models.GetAvailableProducts)
+    router.GET("/get-branches",models.GetBranches)
 
 }

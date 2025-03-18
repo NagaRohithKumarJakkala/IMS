@@ -60,45 +60,105 @@ SELECT
 	c.JSON(http.StatusOK, products)
 }
 
+
 type ProductInsert struct {
-    ProductID    string `json:"product_id"`
-    ProductBrand string `json:"product_brand"`
-    ProductName  string `json:"product_name"`
-    Description  string `json:"description"`
+	ProductID    string  `json:"product_id"`
+	ProductBrand string  `json:"product_brand"`
+	ProductName  string  `json:"product_name"`
+	Description  string  `json:"description"`
+	Category     string  `json:"category"`
+	CostOfItem   float64 `json:"cost_of_item"`
+	MRP          float64 `json:"mrp"`
+	SP           float64 `json:"SP"`
 }
 
-// InsertProduct inserts a new product into the Product_Table
 func InsertProduct(c *gin.Context) {
-    var product ProductInsert
-    
-    // Bind JSON request body to the ProductInsert struct
-    if err := c.ShouldBindJSON(&product); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
-        return
-    }
-    
-    // Validate the required fields
-    if product.ProductID == "" || product.ProductName == "" {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID and Name are required"})
-        return
-    }
-    
-    // SQL query to insert the product
-    query := `
-        INSERT INTO Product_Table (product_id, product_brand, product_name, description)
-        VALUES (?, ?, ?, ?);
-    `
-    
-    // Execute the query
-    _, err := connect.Db.Exec(query, product.ProductID, product.ProductBrand, product.ProductName, product.Description)
-    if err != nil {
-        log.Println("Error inserting product:", err)
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert product"})
-        return
-    }
-    
-    c.JSON(http.StatusCreated, gin.H{
-        "message": "Product inserted successfully",
-        "product": product,
-    })
+	var product ProductInsert
+
+	// Bind JSON request body to struct
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	// Validate required fields
+	if product.ProductID == "" || product.ProductName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID and Product Name are required"})
+		return
+	}
+
+	// Check database connection
+	if err := connect.Db.Ping(); err != nil {
+		log.Println("Database connection lost:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection lost"})
+		return
+	}
+
+	// Begin MySQL transaction
+	tx, err := connect.Db.Begin()
+	if err != nil {
+		log.Println("Transaction start failed:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start transaction"})
+		return
+	}
+
+	// Insert into Product_Table
+	_, err = tx.Exec(`
+		INSERT INTO Product_Table (product_id, product_brand, product_name, description)
+		VALUES (?, ?, ?, ?)
+		ON DUPLICATE KEY UPDATE 
+		product_brand = VALUES(product_brand), 
+		product_name = VALUES(product_name), 
+		description = VALUES(description)`,
+		product.ProductID, product.ProductBrand, product.ProductName, product.Description)
+	if err != nil {
+		tx.Rollback()
+		log.Println("Error inserting product:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert product"})
+		return
+	}
+
+	// Insert into Category_Table
+	_, err = tx.Exec(`
+		INSERT INTO Category_Table (product_id, category)
+		VALUES (?, ?)
+		ON DUPLICATE KEY UPDATE category = VALUES(category)`,
+		product.ProductID, product.Category)
+	if err != nil {
+		tx.Rollback()
+		log.Println("Error inserting category:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert category"})
+		return
+	}
+
+	// Insert into Cost_Table (without branch_id)
+	_, err = tx.Exec(`
+		INSERT INTO Cost_Table (product_id, cost_of_item, mrp, SP)
+		VALUES (?, ?, ?, ?)
+		ON DUPLICATE KEY UPDATE 
+		cost_of_item = VALUES(cost_of_item), 
+		mrp = VALUES(mrp), 
+		SP = VALUES(SP)`,
+		product.ProductID, product.CostOfItem, product.MRP, product.SP)
+	if err != nil {
+		tx.Rollback()
+		log.Println("Error inserting into Cost_Table:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert cost details"})
+		return
+	}
+
+	// Commit transaction
+	err = tx.Commit()
+	if err != nil {
+		log.Println("Transaction commit failed:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Transaction commit failed"})
+		return
+	}
+
+	// Return success response
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Product added successfully",
+		"product": product,
+	})
 }
+

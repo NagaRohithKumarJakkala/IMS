@@ -1,4 +1,4 @@
-import SellingForm from "../../pages/components/sellingform";
+import SellingForm from "../../../components/sellingform";
 
 export default function Home() {
   return (

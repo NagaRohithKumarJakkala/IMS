@@ -32,13 +32,11 @@ func CreateTables(c *gin.Context) {
 
 		// Cost Table (Links Branch & Product)
 		`CREATE TABLE IF NOT EXISTS Cost_Table (
-			branch_id VARCHAR(16),
 			product_id VARCHAR(16),
 			cost_of_item DECIMAL (10,2),
 			mrp DECIMAL (10,2),
 			SP DECIMAL (10,2),
-			PRIMARY KEY (branch_id, product_id),
-			FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE,
+			PRIMARY KEY (product_id),
 			FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 		);`,
 

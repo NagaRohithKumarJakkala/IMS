@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const ProductForm = ({ onSubmit }) => {
+const ProductForm = () => {
   const [formData, setFormData] = useState({
     product_id: "",
     product_brand: "",
@@ -12,16 +12,44 @@ const ProductForm = ({ onSubmit }) => {
     mrp: "",
     SP: "",
   });
+  const createProduct = async (formData) => {
+    const response = await fetch("http://localhost:8080/products", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create product");
+    }
+
+    return response.json();
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onSubmit) {
-      onSubmit(formData);
+
+    const formattedData = {
+      ...formData,
+      cost_of_item: parseFloat(formData.cost_of_item),
+      mrp: parseFloat(formData.mrp),
+      SP: parseFloat(formData.SP),
+    };
+
+    try {
+      const data = await createProduct(formattedData);
+      alert("Product created: " + JSON.stringify(data));
+    } catch (error) {
+      console.error(error);
+      alert("Error creating product");
     }
+
     setFormData({
       product_id: "",
       product_brand: "",
