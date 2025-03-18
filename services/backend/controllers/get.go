@@ -5,5 +5,7 @@ import(
 )
 
 func get(router *gin.Engine ){
-    router.GET("/albums", models.GetAlbums)
+    router.GET("/create-tables", models.CreateTables)
+    router.GET("/get-products", models.GetAvailableProducts)
+
 }
