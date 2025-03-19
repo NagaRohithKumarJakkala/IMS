@@ -8,157 +8,138 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProductInfo struct {
-	ProductID    string  `json:"product_id"`
-	ProductBrand string  `json:"product_brand"` // Added brand name
-	ProductName  string  `json:"product_name"`
-	Quantity     int     `json:"quantity_of_item"`
-	CostOfItem   float64 `json:"cost_of_item"`
+// Product struct
+type Product struct {
+	ProductID     string  `json:"product_id"`
+	ProductBrand  string  `json:"product_brand"`
+	ProductName   string  `json:"product_name"`
+	Description   string  `json:"description"`
+	Category      string  `json:"category"`
+	MRP           float64 `json:"mrp"`
+	SellingPrice  float64 `json:"selling_price"`
 }
 
-// Fetch available products with quantity and cost (excluding expired products)
-func GetAvailableProducts(c *gin.Context) {
-	query := `
-SELECT 
-			P.product_id,
-			P.product_brand,    -- Added brand name in the SELECT clause
-			P.product_name,
-			D.quantity_of_item,
-			C.cost_of_item
-		FROM 
-			Product_Table P
-		JOIN 
-			Duration_Table D ON P.product_id = D.product_id
-		JOIN 
-			Cost_Table C ON P.product_id = C.product_id
-		WHERE 
-			(
-				(D.duration_unit = 'D' AND DATE_ADD(D.manufactured_date, INTERVAL D.duration_value DAY) > CURDATE()) OR
-				(D.duration_unit = 'M' AND DATE_ADD(D.manufactured_date, INTERVAL D.duration_value MONTH) > CURDATE()) OR
-				(D.duration_unit = 'Y' AND DATE_ADD(D.manufactured_date, INTERVAL D.duration_value YEAR) > CURDATE())
-			);
-	`
-	rows, err := connect.Db.Query(query)
-	if err != nil {
-		log.Println("Error executing query:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
-		return
-	}
-	defer rows.Close()
-	
-	var products []ProductInfo
-	for rows.Next() {
-		var p ProductInfo
-		if err := rows.Scan(&p.ProductID, &p.ProductBrand, &p.ProductName, &p.Quantity, &p.CostOfItem); err != nil {
-			log.Println("Error scanning row:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading data"})
-			return
-		}
-		products = append(products, p)
-	}
-	
-	c.JSON(http.StatusOK, products)
-}
-
-
-type ProductInsert struct {
-	ProductID    string  `json:"product_id"`
-	ProductBrand string  `json:"product_brand"`
-	ProductName  string  `json:"product_name"`
-	Description  string  `json:"description"`
-	Category     string  `json:"category"`
-	CostOfItem   float64 `json:"cost_of_item"`
-	MRP          float64 `json:"mrp"`
-	SP           float64 `json:"SP"`
-}
-
+// InsertProduct handles inserting a new product via a POST request
 func InsertProduct(c *gin.Context) {
-	var product ProductInsert
-
-	// Bind JSON request body to struct
+	var product Product
 	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
 		return
 	}
 
-	// Validate required fields
-	if product.ProductID == "" || product.ProductName == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID and Product Name are required"})
+	if product.ProductID == "" || product.ProductName == "" || product.MRP <= 0 || product.SellingPrice <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID, Name, MRP, and Selling Price are required and must be valid"})
 		return
 	}
 
-	// Check database connection
-	if err := connect.Db.Ping(); err != nil {
-		log.Println("Database connection lost:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection lost"})
-		return
-	}
-
-	// Begin MySQL transaction
-	tx, err := connect.Db.Begin()
+	query := "INSERT INTO Product_Table (product_id, product_brand, product_name, description, category, mrp, selling_price) VALUES (?, ?, ?, ?, ?, ?, ?);"
+	_, err := connect.Db.Exec(query, product.ProductID, product.ProductBrand, product.ProductName, product.Description, product.Category, product.MRP, product.SellingPrice)
 	if err != nil {
-		log.Println("Transaction start failed:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to start transaction"})
-		return
-	}
-
-	// Insert into Product_Table
-	_, err = tx.Exec(`
-		INSERT INTO Product_Table (product_id, product_brand, product_name, description)
-		VALUES (?, ?, ?, ?)
-		ON DUPLICATE KEY UPDATE 
-		product_brand = VALUES(product_brand), 
-		product_name = VALUES(product_name), 
-		description = VALUES(description)`,
-		product.ProductID, product.ProductBrand, product.ProductName, product.Description)
-	if err != nil {
-		tx.Rollback()
 		log.Println("Error inserting product:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert product"})
 		return
 	}
 
-	// Insert into Category_Table
-	_, err = tx.Exec(`
-		INSERT INTO Category_Table (product_id, category)
-		VALUES (?, ?)
-		ON DUPLICATE KEY UPDATE category = VALUES(category)`,
-		product.ProductID, product.Category)
-	if err != nil {
-		tx.Rollback()
-		log.Println("Error inserting category:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert category"})
-		return
-	}
-
-	// Insert into Cost_Table (without branch_id)
-	_, err = tx.Exec(`
-		INSERT INTO Cost_Table (product_id, cost_of_item, mrp, SP)
-		VALUES (?, ?, ?, ?)
-		ON DUPLICATE KEY UPDATE 
-		cost_of_item = VALUES(cost_of_item), 
-		mrp = VALUES(mrp), 
-		SP = VALUES(SP)`,
-		product.ProductID, product.CostOfItem, product.MRP, product.SP)
-	if err != nil {
-		tx.Rollback()
-		log.Println("Error inserting into Cost_Table:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert cost details"})
-		return
-	}
-
-	// Commit transaction
-	err = tx.Commit()
-	if err != nil {
-		log.Println("Transaction commit failed:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Transaction commit failed"})
-		return
-	}
-
-	// Return success response
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "Product added successfully",
-		"product": product,
+		"message": "Product inserted successfully",
+		"product":  product,
 	})
+}
+
+func GetProduct(c *gin.Context) {
+	productID := c.Param("product_id")
+
+	if productID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID is required"})
+		return
+	}
+
+	var product Product
+	query := "SELECT product_id, product_brand, product_name, description, category, mrp, selling_price FROM Product_Table WHERE product_id = ?"
+	err := connect.Db.QueryRow(query, productID).Scan(
+		&product.ProductID, &product.ProductBrand, &product.ProductName,
+		&product.Description, &product.Category, &product.MRP, &product.SellingPrice,
+	)
+
+	if err != nil {
+		log.Println("Error fetching product:", err)
+		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"product": product})
+}
+
+func GetAllProducts(c *gin.Context) {
+	var products []Product
+
+	query := "SELECT product_id, product_brand, product_name, description, category, mrp, selling_price FROM Product_Table"
+	rows, err := connect.Db.Query(query)
+	if err != nil {
+		log.Println("Error fetching products:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve products"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductBrand, &product.ProductName,
+			&product.Description, &product.Category, &product.MRP, &product.SellingPrice,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process products"})
+			return
+		}
+		products = append(products, product)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Println("Error iterating through products:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve products"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
+}
+
+func GetProductsByName(c *gin.Context) {
+	queryParam := c.Query("query") // Get search term from query string
+
+	if queryParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Search query is required"})
+		return
+	}
+
+	var products []Product
+	query := "SELECT product_id, product_brand, product_name, description, category, mrp, selling_price FROM Product_Table WHERE product_name LIKE ?"
+	rows, err := connect.Db.Query(query, "%"+queryParam+"%") // Use LIKE for partial matching
+
+	if err != nil {
+		log.Println("Error fetching products:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductBrand, &product.ProductName,
+			&product.Description, &product.Category, &product.MRP, &product.SellingPrice,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			continue
+		}
+		products = append(products, product)
+	}
+
+	if len(products) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No products found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
 }
 

@@ -5,8 +5,13 @@ import(
 )
 
 func get(router *gin.Engine ){
-    router.GET("/create-tables", models.CreateTables)
-    router.GET("/get-products", models.GetAvailableProducts)
-    router.GET("/get-branches",models.GetBranches)
+    //setup 
 
+    router.GET("/create-tables", models.CreateTables)
+    router.GET("/create-triggers", models.CreateTables)
+
+    router.GET("/get-branches",models.GetBranches)
+    router.GET("/product/:product_id",models.GetProduct)
+    router.GET("/products",models.GetAllProducts)
+    router.GET("/products-by-name/:query",models.GetProductsByName)
 }

@@ -8,9 +8,8 @@ const ProductForm = () => {
     product_name: "",
     description: "",
     category: "",
-    cost_of_item: "",
     mrp: "",
-    SP: "",
+    selling_price: "",
   });
   const createProduct = async (formData) => {
     const response = await fetch("http://localhost:8080/products", {
@@ -37,9 +36,8 @@ const ProductForm = () => {
 
     const formattedData = {
       ...formData,
-      cost_of_item: parseFloat(formData.cost_of_item),
       mrp: parseFloat(formData.mrp),
-      SP: parseFloat(formData.SP),
+      selling_price: parseFloat(formData.selling_price),
     };
 
     try {
@@ -56,9 +54,8 @@ const ProductForm = () => {
       product_name: "",
       description: "",
       category: "",
-      cost_of_item: "",
       mrp: "",
-      SP: "",
+      selling_price: "",
     });
   };
 
@@ -113,16 +110,6 @@ const ProductForm = () => {
         <input
           type="number"
           step="0.01"
-          name="cost_of_item"
-          placeholder="Cost of Item"
-          value={formData.cost_of_item}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border rounded"
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
           name="mrp"
           placeholder="MRP"
           value={formData.mrp}
@@ -133,9 +120,9 @@ const ProductForm = () => {
         <input
           type="number"
           step="0.01"
-          name="SP"
+          name="selling_price"
           placeholder="Selling Price (SP)"
-          value={formData.SP}
+          value={formData.selling_price}
           onChange={handleChange}
           className="w-full px-3 py-2 border rounded"
           required
