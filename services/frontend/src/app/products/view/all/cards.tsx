@@ -12,27 +12,23 @@ export default function ProductsPage() {
       try {
         const url =
           query.trim() === ""
-            ? "http://localhost:8080/products"
-            : `http://localhost:8080/products-by-name/${encodeURIComponent(query)}`;
-
-        console.log("Fetching:", url); // Debugging log
+            ? "http://localhost:8080/allproducts"
+            : `http://localhost:8080/products-by-name?query=${encodeURIComponent(query)}`;
 
         const response = await fetch(url);
         if (!response.ok) throw new Error("Failed to fetch products");
 
         const data = await response.json();
-        console.log("Fetched data:", data); // Debugging log
 
         setProducts(data.products || []);
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]); // Reset products on error
+        setProducts([]);
       } finally {
         setLoading(false);
       }
     };
 
-    // Debounce API calls (wait 500ms before making the request)
     const debounceFetch = setTimeout(fetchProducts, 500);
 
     return () => clearTimeout(debounceFetch);
@@ -59,6 +55,9 @@ export default function ProductsPage() {
                 <h2 className="text-xl font-semibold">
                   {product.product_name}
                 </h2>
+                <p className="text-gray-500">
+                  Product ID: {product.product_id}
+                </p>
                 <p className="text-gray-500">Brand: {product.product_brand}</p>
                 <p className="text-gray-500">Category: {product.category}</p>
                 <p className="text-gray-700">{product.description}</p>

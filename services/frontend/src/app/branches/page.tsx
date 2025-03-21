@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import TopBar from "../../components/topbar";
-import Details from "../../components/details";
 import BranchLink from "./branchlink";
 import { useEffect, useState } from "react";
 
@@ -32,7 +31,6 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <Details />
       <div className="border border-white m-4 rounded">
         <h2 className="text-2xl m-4">Branches</h2>
         <div className="border border-white grid m-4 min-h-[200px] rounded sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

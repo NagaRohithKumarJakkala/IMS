@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useGlobalContext } from "../../context/GlobalContext";
+import { useSearchParams } from "next/navigation";
 
 interface BranchLinkProps {
   branchId: string;
@@ -9,14 +9,12 @@ interface BranchLinkProps {
 }
 
 export default function BranchLink({ branchId, branchName }: BranchLinkProps) {
-  const { setBranchName, setBranchId } = useGlobalContext();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("user_id") || "";
+
   return (
     <Link
-      href={`/dashboard`}
-      onClick={() => {
-        setBranchName(branchName);
-        setBranchId(branchId);
-      }}
+      href={`/dashboard?user_id=${encodeURIComponent(userId)}&branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}`}
       className="border border-white select-none m-4 text-center flex justify-center items-center text-xl hover:bg-gray-800 transition duration-300 cursor-pointer p-4 rounded"
     >
       {branchName}

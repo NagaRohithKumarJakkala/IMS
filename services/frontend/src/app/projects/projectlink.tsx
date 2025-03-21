@@ -1,18 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useGlobalContext } from "../../context/GlobalContext";
+import { useSearchParams } from "next/navigation";
 
-interface ProjectLinkProps {
-  projectName: string;
-}
+export default function ProjectLink({ projectName }) {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("user_id") || "";
 
-export default function ProjectLink({ projectName }: ProjectLinkProps) {
-  const { setProjectName } = useGlobalContext();
   return (
     <Link
-      href={`/branches`}
-      onClick={() => setProjectName(projectName)}
+      href={`/branches?user_id=${encodeURIComponent(userId)}`}
       className="border border-white select-none m-4 text-center flex justify-center items-center text-xl hover:bg-gray-800 transition duration-300 cursor-pointer p-4 rounded"
     >
       {projectName}
