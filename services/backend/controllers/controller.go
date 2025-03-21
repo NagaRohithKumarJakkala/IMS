@@ -1,14 +1,14 @@
 package controllers
 
-import(
-    "github.com/gin-gonic/gin"
-    	"github.com/gin-contrib/cors" // Import cors middleware
+import (
+	"github.com/gin-contrib/cors" // Import cors middleware
+	"github.com/gin-gonic/gin"
 )
 
-func Run(){
-    router := gin.Default()
+func Run() {
+	router := gin.Default()
 
-    	router.Use(cors.New(cors.Config{
+	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"}, // Allow Next.js frontend
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
@@ -16,9 +16,9 @@ func Run(){
 		AllowCredentials: true,
 	}))
 
-    get(router)
-    post(router)
-    put(router)
-    del(router)
-    router.Run("localhost:8080")
+	get(router)
+	post(router)
+	put(router)
+	del(router)
+	router.Run("localhost:8080")
 }

@@ -1,12 +1,12 @@
 package models
 
 import (
+	connect "backend/initializers"
 	"log"
 	"net/http"
-  "backend/initializers"
+
 	"github.com/gin-gonic/gin"
 )
-
 
 // Branch insert
 type Branch struct {
@@ -36,7 +36,7 @@ func InsertBranch(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Branch inserted successfully",
-		"branch": branch,
+		"branch":  branch,
 	})
 }
 
@@ -48,7 +48,7 @@ func GetBranches(c *gin.Context) {
 	}
 	defer rows.Close()
 
-  var branches []Branch
+	var branches []Branch
 
 	for rows.Next() {
 		var branch Branch
@@ -65,7 +65,5 @@ func GetBranches(c *gin.Context) {
 		return
 	}
 
-
 	c.JSON(http.StatusOK, branches)
 }
-

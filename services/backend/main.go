@@ -1,12 +1,11 @@
 package main
 
 import (
-    "backend/initializers"
-    "backend/controllers"
+	"backend/controllers"
+	connect "backend/initializers"
 )
 
 func main() {
-    connect.ConnectDB()
-    controllers.Run()
+	connect.ConnectDB()
+	controllers.Run()
 }
-

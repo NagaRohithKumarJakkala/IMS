@@ -181,4 +181,3 @@ var CreateTriggersQueries = []string{
 		VALUES (NEW.product_id, (SELECT branch_id FROM Order_Table WHERE order_id = NEW.order_id), -NEW.quantity_of_item, 'DECREASE');
 	END;`,
 }
-

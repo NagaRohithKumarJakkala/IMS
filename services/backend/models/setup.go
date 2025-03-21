@@ -1,10 +1,10 @@
 package models
 
 import (
+	connect "backend/initializers"
 	"log"
 	"net/http"
 
-	"backend/initializers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,4 +33,3 @@ func CreateTriggers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "All triggers created successfully"})
 }
-

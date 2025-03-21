@@ -1,8 +1,9 @@
 package controllers
-import(
-      // "backend/models"
-    "github.com/gin-gonic/gin"
+
+import (
+	// "backend/models"
+	"github.com/gin-gonic/gin"
 )
 
-func put(router *gin.Engine ){
+func put(router *gin.Engine) {
 }

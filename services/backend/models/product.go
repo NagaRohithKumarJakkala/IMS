@@ -4,19 +4,20 @@ import (
 	"log"
 	"net/http"
 
-	"backend/initializers"
+	connect "backend/initializers"
+
 	"github.com/gin-gonic/gin"
 )
 
 // Product struct
 type Product struct {
-	ProductID     string  `json:"product_id"`
-	ProductBrand  string  `json:"product_brand"`
-	ProductName   string  `json:"product_name"`
-	Description   string  `json:"description"`
-	Category      string  `json:"category"`
-	MRP           float64 `json:"mrp"`
-	SellingPrice  float64 `json:"selling_price"`
+	ProductID    string  `json:"product_id"`
+	ProductBrand string  `json:"product_brand"`
+	ProductName  string  `json:"product_name"`
+	Description  string  `json:"description"`
+	Category     string  `json:"category"`
+	MRP          float64 `json:"mrp"`
+	SellingPrice float64 `json:"selling_price"`
 }
 
 // InsertProduct handles inserting a new product via a POST request
@@ -42,7 +43,7 @@ func InsertProduct(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Product inserted successfully",
-		"product":  product,
+		"product": product,
 	})
 }
 
@@ -142,4 +143,3 @@ func GetProductsByName(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"products": products})
 }
-

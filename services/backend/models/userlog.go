@@ -4,15 +4,15 @@ import (
 	// "log"
 	// "net/http"
 	// "time"
-  // "backend/initializers"
+	// "backend/initializers"
 
 	"github.com/gin-gonic/gin"
 )
 
 // User log insert
 type UserLogInsert struct {
-	UserID    int64  `json:"user_id"`
-	LoginTime string `json:"login_time,omitempty"` // Optional, format: YYYY-MM-DDTHH:MM:SS
+	UserID     int64  `json:"user_id"`
+	LoginTime  string `json:"login_time,omitempty"`  // Optional, format: YYYY-MM-DDTHH:MM:SS
 	LogoutTime string `json:"logout_time,omitempty"` // Optional, format: YYYY-MM-DDTHH:MM:SS
 }
 
@@ -36,7 +36,7 @@ func InsertUserLog(c *gin.Context) {
 	//
 	// var query string
 	// var args []interface{}
-	// 
+	//
 	// if log.LogoutTime != "" {
 	// 	// If logout time is provided, insert both login and logout
 	// 	query = "INSERT INTO user_log (user_id, login_time, logout_time) VALUES (?, ?, ?);"
@@ -46,7 +46,7 @@ func InsertUserLog(c *gin.Context) {
 	// 	query = "INSERT INTO user_log (user_id, login_time) VALUES (?, ?);"
 	// 	args = []interface{}{log.UserID, loginTime}
 	// }
-	// 
+	//
 	// result, err := connect.Db.Exec(query, args...)
 	// if err != nil {
 	// 	log.Println("Error inserting user log:", err)
@@ -63,4 +63,3 @@ func InsertUserLog(c *gin.Context) {
 	// 	"logout_time": log.LogoutTime,
 	// })
 }
-

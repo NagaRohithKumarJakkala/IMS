@@ -1,10 +1,11 @@
 package models
 
 import (
-	"backend/initializers"
-	"github.com/gin-gonic/gin"
+	connect "backend/initializers"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type User struct {
