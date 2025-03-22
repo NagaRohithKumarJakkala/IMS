@@ -11,7 +11,7 @@ const ProductForm = () => {
     mrp: "",
     selling_price: "",
   });
-  const createProduct = async (formData) => {
+  const createProduct = async (formData : any) => {
     const response = await fetch("http://localhost:8080/products", {
       method: "POST",
       headers: {

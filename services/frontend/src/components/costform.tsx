@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-const CostForm = ({ onSubmit }) => {
+const CostForm = ({ onSubmit  }) => {
   const [formData, setFormData] = useState({
     branch_id: "",
     product_id: "",
@@ -10,11 +10,11 @@ const CostForm = ({ onSubmit }) => {
     SP: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     if (onSubmit) {
       onSubmit(formData);

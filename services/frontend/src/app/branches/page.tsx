@@ -29,11 +29,11 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <div className="bg-blue-400 min-h-screen max-h-screen overflow-y-auto bg-[url('/blue.png')] bg-cover">
       <TopBar />
-      <div className="border border-white m-4 rounded">
-        <h2 className="text-2xl m-4">Branches</h2>
-        <div className="border border-white grid m-4 min-h-[200px] rounded sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="border border-white m-4 rounded-xl shadow-xl bg-white">
+      <h2 className="text-3xl font-semibold text-slate-900 font-serif m-4">Branches</h2>
+        <div className="border border-stone-600 grid m-4 min-h-[200px] rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {branches.map((branch, index) => (
             <BranchLink
               branchName={branch.branch_name}
@@ -43,18 +43,18 @@ export default function Home() {
           ))}
           <Link
             href="/dashboard"
-            className="border border-white select-none m-4 text-center flex justify-center items-center text-xl hover:bg-gray-700 transition duration-300 cursor-pointer p-4 rounded"
+            className="border border-stone-600 shadow-xl select-none m-4 text-center flex justify-center items-center text-white bg-teal-500 text-xl font-semibold hover:bg-teal-700 hover:text-white transition duration-300 cursor-pointer p-4 rounded-lg"
           >
             All branches
           </Link>
           <Link
             href="/branches/create"
-            className="border border-white select-none m-4 text-center flex justify-center items-center text-xl cursor-pointer hover:bg-gray-700 transition duration-300 p-4 rounded"
+            className="border border-stone-600 shadow-xl select-none m-4 text-center flex justify-center items-center text-white bg-black text-xl font-semibold cursor-pointer hover:bg-gray-400 hover:text-red-500 transition duration-300 p-4 rounded-lg"
           >
-            + New Branch
+            + Add New Branch
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }
