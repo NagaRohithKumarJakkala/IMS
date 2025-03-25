@@ -1,9 +1,9 @@
 package views
 
-import(
-  "fmt"
+import (
+	"fmt"
 )
 
-func View(){
-  fmt.Printf("only for folder retention")
+func View() {
+	fmt.Printf("only for folder retention")
 }

@@ -1,25 +1,23 @@
-import TopBar from "../../pages/components/topbar";
+import TopBar from "../../components/topbar";
+import ProjectLink from "./projectlink";
+
 export default function Home() {
-  const projectNames = ["project-1", "project-2", "project-3", "project-4"];
+  const projectNames = ["Project-1", "Project-2", "Project-3", "Project-4"];
+
   return (
-    <>
+    <div className="bg-blue-400 min-h-screen max-h-screen overflow-y-auto bg-[url('/blue.png')] bg-cover">
       <TopBar />
-      <div className="border border-white m-4 rounded">
-        <h2 className="text-2xl m-4">Projects</h2>
-        <div className="border border-white   grid m-4 min-h-[400] rounded sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {projectNames.map((projectName, index) => (
-            <div
-              key={index}
-              className="border border-white select-none m-4 text-center flex justify-center items-center text-xl"
-            >
-              {projectName}
-            </div>
+      <div className="border border-white m-4 rounded-xl shadow-xl bg-white">
+        <h2 className="text-3xl font-semibold text-slate-900 font-serif m-4">Projects</h2>
+        <div className="border border-stone-600 grid m-4 min-h-[400px] rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {projectNames.map((projectname, index) => (
+            <ProjectLink key={index} projectName={projectname} />
           ))}
-          <div className="border border-white select-none m-4 text-center flex justify-center items-center text-xl">
-            + new Project
+          <div className="border border-stone-600 shadow-xl select-none m-4 text-center flex justify-center items-center text-white bg-black text-xl font-semibold cursor-pointer hover:bg-gray-400 hover:text-red-500 transition duration-300 p-4 rounded-lg">
+            + Add New Project
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
