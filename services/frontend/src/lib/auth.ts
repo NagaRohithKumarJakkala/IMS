@@ -1,10 +1,8 @@
-// src/lib/auth.ts
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 
-// Create and export the auth options
-const authOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -13,67 +11,53 @@ const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Validate that credentials exist
         if (!credentials?.username || !credentials?.password) {
-          return null;
+          throw new Error("Missing username or password");
         }
 
         try {
-          // Make a request to your Go backend authentication endpoint
           const response = await axios.post(
             `${process.env.GO_BACKEND_URL}/auth/login`,
-            {
-              username: credentials.username,
-              password: credentials.password,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            },
+            { username: credentials.username, password: credentials.password },
+            { headers: { "Content-Type": "application/json" } },
           );
 
-          // Check if authentication was successful
-          if (response.data.success && response.data.user) {
+          if (response.data.success) {
             return {
-              id: response.data.user.id,
-              username: response.data.user.username,
-              email: response.data.user.email,
+              id: response.data.user_id.toString(),
+              username: credentials.username,
+              level_of_access: response.data.level_of_access,
             };
           }
 
-          // Return null if authentication failed
-          return null;
+          throw new Error("Invalid credentials");
         } catch (error) {
           console.error("Authentication error:", error);
-          return null;
+          throw new Error("Authentication failed");
         }
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.username = user.username;
-        token.email = user.email;
+        token.level_of_access = user.level_of_access;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.username = token.username as string;
-      session.user.email = token.email as string;
+      session.user.id = token.id;
+      session.user.username = token.username;
+      session.user.level_of_access = token.level_of_access;
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: "jwt" },
 };
 
-// Create handlers separately
 const handler = NextAuth(authOptions);
-
-export const { GET, POST } = handler;
+export { handler as GET, handler as POST };
 export default handler;

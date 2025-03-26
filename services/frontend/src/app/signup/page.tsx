@@ -1,54 +1,64 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Lock, User, LogIn } from "lucide-react";
+import bcrypt from "bcryptjs";
+import { User, Lock, LogIn } from "lucide-react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [levelOfAccess, setLevelOfAccess] = useState("user");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
+    if (!username || !password) {
+      setError("Username and Password are required");
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        username,
-        password,
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username,
+          password: hashedPassword,
+          level_of_access: levelOfAccess,
+        }),
       });
 
-      if (result?.error) {
-        setError("Invalid username or password");
-        setIsLoading(false);
-      } else {
-        router.push("/dashboard"); // Redirect to dashboard after login
-      }
-    } catch (err) {
-      setError("An unexpected error occurred");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Signup failed");
+
+      router.push("/login"); // Redirect to login page
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-100 to-green-300 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                Welcome Back
-              </h1>
-              <p className="text-gray-600">Sign in to your account</p>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">Join Us</h1>
+              <p className="text-gray-600">Create a new account</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSignup} className="space-y-6">
               {error && (
                 <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-lg text-center">
                   {error}
@@ -65,7 +75,7 @@ export default function LoginPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Username"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                 />
               </div>
 
@@ -79,14 +89,25 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                 />
+              </div>
+
+              <div className="relative">
+                <select
+                  value={levelOfAccess}
+                  onChange={(e) => setLevelOfAccess(e.target.value)}
+                  className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
               </div>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                className="w-full flex items-center justify-center bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
               >
                 {isLoading ? (
                   <svg
@@ -110,30 +131,21 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <LogIn className="h-5 w-5 mr-2" />
-                    Sign In
+                    Sign Up
                   </>
                 )}
               </button>
             </form>
-
-            <div className="mt-6 text-center">
-              <a
-                href="#"
-                className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                Forgot Password?
-              </a>
-            </div>
           </div>
 
           <div className="bg-gray-100 text-center py-4">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
+              Already have an account?{" "}
               <a
-                href="/signup"
-                className="text-blue-600 hover:text-blue-800 hover:underline"
+                href="/login"
+                className="text-green-600 hover:text-green-800 hover:underline"
               >
-                Sign Up
+                Sign In
               </a>
             </p>
           </div>

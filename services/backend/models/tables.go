@@ -3,9 +3,11 @@ package models
 var CreateTablesQueries = []string{
 	// User Table
 	`CREATE TABLE IF NOT EXISTS User_Table (
-		user_id INT AUTO_INCREMENT PRIMARY KEY,
-		level_of_access VARCHAR(16) NOT NULL
-	);`,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    user_password TEXT NOT NULL,
+    level_of_access VARCHAR(16) NOT NULL
+);`,
 
 	// User Log Table
 	`CREATE TABLE IF NOT EXISTS User_Log (
