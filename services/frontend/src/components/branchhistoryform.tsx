@@ -15,8 +15,11 @@ const BranchHistoryForm = ({ branchId }) => {
   }, [branchId]);
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Branch Sales History (Branch ID: {branchId})</h2>
+    <div className="p-4 relative">
+      <div className="absolute top-0 right-0 p-2 bg-gray-200 rounded-md shadow-md">
+        <span className="font-bold">Branch ID:</span> {branchId}
+      </div>
+      <h2 className="text-xl font-bold mb-4">Branch Sales History</h2>
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
