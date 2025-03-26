@@ -71,9 +71,7 @@ export default function ProductsPage() {
                 <p className="text-gray-500">Category: {product.category}</p>
                 <p className="text-gray-700">{product.description}</p>
                 <p className="text-gray-700">MRP: ${product.mrp.toFixed(2)}</p>
-                <p className="text-gray-700">
-                  quantity: ${product.quantity_of_item}
-                </p>
+                <p className="text-gray-700">quantity: {product.quantity}</p>
                 <p className="text-green-600 font-bold">
                   Selling Price: ${product.selling_price.toFixed(2)}
                 </p>

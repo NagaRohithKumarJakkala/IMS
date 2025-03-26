@@ -18,15 +18,27 @@ export default function Home() {
         <div className="border border-white m-4 rounded">
           <NavLink
             href={`/products/view?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="View Products"
+            text="Stock details"
+          />
+          <NavLink
+            href={`/products/create?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+            text="add Product"
           />
           <NavLink
             href={`/products/add?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="Add Products"
+            text="new Entry"
           />
           <NavLink
             href={`/products/sell?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="Sell Products"
+            text=" new Order"
+          />
+          <NavLink
+            href={`/supplier?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+            text="Supplier details"
+          />
+          <NavLink
+            href={`/history?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+            text="History"
           />
           <NavLink
             href={`/analysis?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
@@ -35,10 +47,6 @@ export default function Home() {
           <NavLink
             href={`/refill-recommendations?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
             text="Refill Recommendations"
-          />
-          <NavLink
-            href={`/history?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="History"
           />
         </div>
         <div className="border border-white m-4 rounded select-none">

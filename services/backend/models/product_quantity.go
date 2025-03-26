@@ -11,6 +11,7 @@ import (
 type ProductDetails struct {
 	ProductID    string  `json:"product_id"`
 	ProductName  string  `json:"product_name"`
+	ProductBrand string  `json:"product_brand"`
 	Category     string  `json:"category"`
 	MRP          float64 `json:"mrp"`
 	SellingPrice float64 `json:"selling_price"`
@@ -18,8 +19,8 @@ type ProductDetails struct {
 }
 
 func GetProductDetails(c *gin.Context) {
-	branchID := c.Param("branch_id")
-	productID := c.Param("product_id")
+	branchID := c.Query("branch_id")
+	productID := c.Query("product_id")
 
 	if branchID == "" || productID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Branch ID and Product ID are required"})
@@ -28,13 +29,13 @@ func GetProductDetails(c *gin.Context) {
 
 	var productDetails ProductDetails
 	query := `
-		SELECT p.product_id, p.product_name, p.category, p.mrp, p.sp AS selling_price, s.quantity_of_item 
+		SELECT p.product_id, p.product_name,p.product_brand, p.category, p.mrp, p.selling_price AS selling_price, s.quantity_of_item 
 		FROM Product_Table p 
 		JOIN Stock_Table s ON p.product_id = s.product_id 
 		WHERE s.branch_id = ? AND p.product_id = ?`
 
 	err := connect.Db.QueryRow(query, branchID, productID).Scan(
-		&productDetails.ProductID, &productDetails.ProductName,
+		&productDetails.ProductID, &productDetails.ProductName, &productDetails.ProductBrand,
 		&productDetails.Category, &productDetails.MRP,
 		&productDetails.SellingPrice, &productDetails.Quantity,
 	)
@@ -49,7 +50,7 @@ func GetProductDetails(c *gin.Context) {
 }
 
 func GetAllProductsInBranch(c *gin.Context) {
-	branchID := c.Param("branch_id")
+	branchID := c.Query("branch_id")
 
 	if branchID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Branch ID is required"})
@@ -58,7 +59,7 @@ func GetAllProductsInBranch(c *gin.Context) {
 
 	var products []ProductDetails
 	query := `
-		SELECT p.product_id, p.product_name, p.category, p.mrp, p.sp AS selling_price, s.quantity_of_item 
+		SELECT p.product_id, p.product_name, p.product_brand, p.category, p.mrp, p.selling_price AS selling_price, s.quantity_of_item 
 		FROM Product_Table p 
 		JOIN Stock_Table s ON p.product_id = s.product_id 
 		WHERE s.branch_id = ?`
@@ -74,7 +75,8 @@ func GetAllProductsInBranch(c *gin.Context) {
 	for rows.Next() {
 		var product ProductDetails
 		if err := rows.Scan(
-			&product.ProductID, &product.ProductName, &product.Category,
+			&product.ProductID, &product.ProductName, &product.ProductBrand,
+			&product.Category,
 			&product.MRP, &product.SellingPrice, &product.Quantity,
 		); err != nil {
 			log.Println("Error scanning product:", err)
@@ -92,7 +94,7 @@ func GetAllProductsInBranch(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"products": products})
 }
 func GetProductsByNameInBranch(c *gin.Context) {
-	branchID := c.Param("branch_id")
+	branchID := c.Query("branch_id")
 	queryParam := c.Query("query")
 
 	if branchID == "" || queryParam == "" {
@@ -102,7 +104,7 @@ func GetProductsByNameInBranch(c *gin.Context) {
 
 	var products []ProductDetails
 	query := `
-		SELECT p.product_id, p.product_name, p.category, p.mrp, p.sp AS selling_price, s.quantity_of_item 
+		SELECT p.product_id, p.product_name, p.product_brand, p.category, p.mrp, p.selling_price AS selling_price, s.quantity_of_item 
 		FROM Product_Table p 
 		JOIN Stock_Table s ON p.product_id = s.product_id 
 		WHERE s.branch_id = ? AND p.product_name LIKE ?`
@@ -118,7 +120,7 @@ func GetProductsByNameInBranch(c *gin.Context) {
 	for rows.Next() {
 		var product ProductDetails
 		if err := rows.Scan(
-			&product.ProductID, &product.ProductName, &product.Category,
+			&product.ProductID, &product.ProductName, &product.ProductBrand, &product.Category,
 			&product.MRP, &product.SellingPrice, &product.Quantity,
 		); err != nil {
 			log.Println("Error scanning product:", err)

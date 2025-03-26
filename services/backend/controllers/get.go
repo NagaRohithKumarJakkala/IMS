@@ -10,7 +10,7 @@ func get(router *gin.Engine) {
 	//setup
 
 	router.GET("/create-tables", models.CreateTables)
-	router.GET("/create-triggers", models.CreateTables)
+	router.GET("/create-triggers", models.CreateTriggers)
 
 	router.GET("/get-branches", models.GetBranches)
 	router.GET("/product/:product_id", models.GetProduct)
