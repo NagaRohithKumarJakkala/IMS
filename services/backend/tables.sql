@@ -1,7 +1,10 @@
 CREATE TABLE User_Table (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    user_password TEXT NOT NULL,
     level_of_access VARCHAR(16) NOT NULL
 );
+
 
 CREATE TABLE User_Log (
     log_id BIGINT AUTO_INCREMENT PRIMARY KEY,
