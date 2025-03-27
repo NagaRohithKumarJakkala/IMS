@@ -162,7 +162,7 @@ const EntryForm = () => {
                       required
                     />
                   </td>
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className=" text-black border border-gray-300 px-2 py-1">
                     {(item.quantity_of_item * item.cost_of_item).toFixed(2)}
                   </td>
                   <td>
