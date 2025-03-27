@@ -100,7 +100,7 @@ const OrderForm = () => {
   };
 
   return (
-    <div className="p-5 border rounded-xl shadow-xl bg-green-200 max-w-full mx-auto">
+    <div className="p-5 border rounded-xl shadow-xl bg-white max-w-full mx-auto">
       <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
         Place New Order
       </h2>

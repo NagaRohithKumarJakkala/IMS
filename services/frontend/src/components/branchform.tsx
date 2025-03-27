@@ -33,9 +33,9 @@ const BranchForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-w-full min-h-screen bg-[url('/dino-green.png')] bg-cover"> 
-      <div className="p-5 border rounded-xl shadow-xl bg-green-200 max-w-md mx-auto">
-        <h2 className="text-2xl text-slate-900 font-extrabold mb-4">Add Branch Details</h2>
+    <div className="flex justify-center items-center min-w-full min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 bg-cover"> 
+      <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
+        <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add Branch Details</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

@@ -60,7 +60,7 @@ const ProductForm = () => {
   };
 
   return (
-    <div className="p-5 border rounded-xl shadow-xl bg-green-200 max-w-md mx-auto">
+    <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
       <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add Product</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
