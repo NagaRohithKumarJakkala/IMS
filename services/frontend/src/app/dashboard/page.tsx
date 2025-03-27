@@ -14,7 +14,7 @@ export default function Home() {
     <>
       <TopBar />
       <div className="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-400 min-h-screen flex flex-col sm:grid sm:grid-cols-2 m-4 p-4 rounded-lg shadow-lg">
-        <div className="text-3xl font-semibold text-white m-4 col-span-2">Dashboard</div>
+        <div className="text-3xl font-serif font-semibold text-white m-4 col-span-2">Dashboard</div>
         <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-lg shadow-md">
           <NavLink
             href={`/products/view?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}

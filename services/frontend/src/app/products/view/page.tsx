@@ -13,16 +13,16 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <div className="border border-white flex flex-col m-4 rounded">
-        <div className="text-2xl m-4 col-span-2">Add product</div>
+      <div className="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-400 flex flex-col m-4 rounded">
+        <div className="text-3xl font-serif font-semibold text-white m-6 col-span-2">Stocks</div>
         <div className="border border-white m-4 rounded">
           <NavLink
             href={`/products/view/branch?user_id=${encodeURIComponent(userId)}&branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}`}
-            text="view product quantities in branch"
+            text="View Product & Quantities in Branch"
           />
           <NavLink
             href={`/products/view/all?user_id=${encodeURIComponent(userId)}&branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}`}
-            text="view all products"
+            text="View All Products"
           />
         </div>
       </div>

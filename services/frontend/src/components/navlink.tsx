@@ -11,7 +11,7 @@ export default function NavLink({ href, text }: NavLinkProps) {
   return (
     <Link
       href={href}
-      className="block border border-white m-4 p-2 rounded select-none hover:bg-gray-800 transition duration-300"
+      className="block border border-white m-6 p-2 rounded select-none hover:bg-gray-800 hover:scale-95 transition duration-300"
     >
       {text}
     </Link>
