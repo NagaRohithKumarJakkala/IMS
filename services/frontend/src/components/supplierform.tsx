@@ -1,5 +1,8 @@
 "use client";
+
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { fetchProtectedData } from "@/utils/api";
 
 const SupplierForm = () => {
   const [formData, setFormData] = useState({
@@ -9,25 +12,18 @@ const SupplierForm = () => {
 
   const createSupplier = async (supplierData) => {
     try {
-      const response = await fetch("http://localhost:8080/supplier", {
+      const data = await fetchProtectedData("supplier", "", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(supplierData),
       });
-
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Failed to create supplier: ${errorMessage}`);
-      }
-
-      const data = await response.json();
       alert("Supplier created: " + JSON.stringify(data));
-      return data;
+      setFormData({ supplier_id: "", supplier_name: "" });
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error creating supplier: " + error.message);
+      console.error("Error creating supplier:", error);
+      alert("Error creating supplier");
     }
   };
 
@@ -38,11 +34,10 @@ const SupplierForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formattedData = {
-      supplier_id: parseInt(formData.supplier_id, 10), // Ensure it's a number
-      supplier_name: formData.supplier_name.trim(), // Remove extra spaces
+      supplier_id: parseInt(formData.supplier_id, 10),
+      supplier_name: formData.supplier_name.trim(),
     };
     await createSupplier(formattedData);
-    setFormData({ supplier_id: "", supplier_name: "" });
   };
 
   return (

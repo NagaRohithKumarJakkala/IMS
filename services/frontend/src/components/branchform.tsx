@@ -1,5 +1,8 @@
 "use client";
+
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { fetchProtectedData } from "@/utils/api";
 
 const BranchForm = () => {
   const [formData, setFormData] = useState({
@@ -7,35 +10,38 @@ const BranchForm = () => {
     branch_name: "",
   });
 
-  const handleChange = (e : any) => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent page reload
 
-    const response = await fetch("http://localhost:8080/branches", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        branch_id: formData.branch_id,
-        branch_name: formData.branch_name,
-      }),
-    });
-
-    if (response.ok) {
-      alert("Branch added successfully!");
-    } else {
+    try {
+      const data = await fetchProtectedData("branches", "", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          branch_id: formData.branch_id,
+          branch_name: formData.branch_name,
+        }),
+      });
+      alert("Branch added successfully: " + JSON.stringify(data));
+      setFormData({ branch_id: "", branch_name: "" });
+    } catch (error) {
+      console.error("Error adding branch:", error);
       alert("Failed to add branch");
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-w-full min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 bg-cover"> 
+    <div className="flex justify-center items-center min-w-full min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 bg-cover">
       <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
-        <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add Branch Details</h2>
+        <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
+          Add Branch Details
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
