@@ -11,7 +11,7 @@ CREATE TABLE User_Log (
     user_id INT NOT NULL,
     login_time DATETIME NOT NULL,
     logout_time DATETIME NOT NULL,
-	CONSTRAINT fk_userlog_user FOREIGN KEY (user_id) REFERENCES User_Table(user_id) ON DELETE CASCADE
+	CONSTRAINT fk_userlog_user FOREIGN KEY (user_id) REFERENCES User_Table(user_id)
 );
 
 CREATE TABLE Supplier_Table (
