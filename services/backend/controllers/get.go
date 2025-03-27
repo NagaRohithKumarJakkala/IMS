@@ -24,6 +24,7 @@ func get(router *gin.Engine) {
 	{
 		staffGroup.GET("/product/:product_id", models.GetProduct)
 		staffGroup.GET("/products-by-name", models.GetProductsByName)
+		staffGroup.GET("/get-suppliers", models.GetSuppliers)
 	}
 
 	customerGroup := router.Group("/")
