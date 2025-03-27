@@ -26,7 +26,7 @@ CREATE TABLE Product_Table (
     description VARCHAR(512),
     category VARCHAR(64),
     mrp DECIMAL(10,2) NOT NULL CHECK (mrp >= 0),  
-    SP DECIMAL(10,2) NOT NULL CHECK (SP >= 0)  
+    selling_price DECIMAL(10,2) NOT NULL CHECK (selling_price >= 0)  
 );
 
 CREATE TABLE Branch_Table( 
@@ -56,7 +56,7 @@ CREATE TABLE Order_Items (
     order_id BIGINT, 
     product_id VARCHAR(16), 
     quantity_of_item INT CHECK (quantity_of_item > 0) NOT NULL, 
-    SP DECIMAL(10,2) NOT NULL CHECK (SP >= 0), 
+    selling_price DECIMAL(10,2) NOT NULL CHECK (selling_price >= 0), 
     PRIMARY KEY (order_id, product_id),
     FOREIGN KEY (order_id) REFERENCES Order_Table(order_id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE

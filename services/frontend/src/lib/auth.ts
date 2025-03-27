@@ -21,20 +21,21 @@ const authOptions: NextAuthOptions = {
             `${process.env.GO_BACKEND_URL}/login`,
             {
               username: credentials.username,
-              password: credentials.password, // Send directly, backend handles hashing
+              password: credentials.password,
             },
             {
               headers: { "Content-Type": "application/json" },
             },
           );
 
-          if (response.data.success && response.data.user) {
-            const user = response.data.user;
+          console.log("Backend Response:", response.data); // ✅ Debugging log
 
+          if (response.data.success && response.data.user) {
             return {
-              id: user.id.toString(),
-              username: user.username,
-              level_of_access: user.level_of_access,
+              id: response.data.user.id,
+              username: response.data.user.username,
+              level_of_access: response.data.user.level_of_access,
+              accessToken: response.data.token, // ✅ Ensure JWT is stored
             };
           }
 
@@ -50,8 +51,6 @@ const authOptions: NextAuthOptions = {
     signIn: "/login",
     signOut: "/signout",
     error: "/error",
-    verifyRequest: "/verify-request",
-    newUser: "/welcome",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -59,7 +58,9 @@ const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.username = user.username;
         token.level_of_access = user.level_of_access;
+        token.accessToken = user.accessToken; // ✅ Store JWT in JWT callback
       }
+      console.log("JWT Token:", token); // ✅ Debugging log
       return token;
     },
     async session({ session, token }) {
@@ -68,6 +69,8 @@ const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.level_of_access = token.level_of_access;
       }
+      session.accessToken = token.accessToken; // ✅ Store JWT in session
+      console.log("Session Data:", session); // ✅ Debugging log
       return session;
     },
   },

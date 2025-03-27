@@ -2,34 +2,49 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { fetchProtectedData } from "@/utils/api";
+
+interface Product {
+  product_id: string;
+  product_name: string;
+  product_brand: string;
+  category: string;
+  description: string;
+  mrp: number;
+  quantity: number;
+  selling_price: number;
+}
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
   const userId = searchParams.get("user_id") || "";
   const branchId = searchParams.get("branch_id") || "";
   const branchName = searchParams.get("branch_name") || "";
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!branchId) return;
 
     const fetchProducts = async () => {
       setLoading(true);
+      setError(null);
+
       try {
-        const url =
-          query.trim() === ""
-            ? `http://localhost:8080/products?branch_id=${encodeURIComponent(branchId)}`
-            : `http://localhost:8080/products/branch?branch_id=${encodeURIComponent(branchId)}&query=${encodeURIComponent(query)}`;
+        const queryParams = query.trim()
+          ? `branch_id=${encodeURIComponent(branchId)}&query=${encodeURIComponent(query)}`
+          : `branch_id=${encodeURIComponent(branchId)}`;
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch products");
-
-        const data = await response.json();
+        const data = await fetchProtectedData<{ products: Product[] }>(
+          "products",
+          queryParams,
+        );
         setProducts(data.products || []);
-      } catch (error) {
-        console.error("Error fetching products:", error);
+      } catch (err: any) {
+        console.error("Error fetching products:", err);
+        setError(err.message);
         setProducts([]);
       } finally {
         setLoading(false);
@@ -46,6 +61,7 @@ export default function ProductsPage() {
         Products in {branchName}
       </h1>
       <p className="text-center text-gray-600">User ID: {userId}</p>
+
       <input
         type="text"
         placeholder="Search by name..."
@@ -53,7 +69,10 @@ export default function ProductsPage() {
         onChange={(e) => setQuery(e.target.value)}
         className="w-full p-2 mb-4 border rounded"
       />
+
       {loading && <p className="text-center text-gray-600">Loading...</p>}
+      {error && <p className="text-center text-red-500">{error}</p>}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.length > 0
           ? products.map((product) => (
@@ -71,7 +90,7 @@ export default function ProductsPage() {
                 <p className="text-gray-500">Category: {product.category}</p>
                 <p className="text-gray-700">{product.description}</p>
                 <p className="text-gray-700">MRP: ${product.mrp.toFixed(2)}</p>
-                <p className="text-gray-700">quantity: {product.quantity}</p>
+                <p className="text-gray-700">Quantity: {product.quantity}</p>
                 <p className="text-green-600 font-bold">
                   Selling Price: ${product.selling_price.toFixed(2)}
                 </p>

@@ -52,7 +52,7 @@ func InsertOrder(c *gin.Context) {
 		return
 	}
 
-	queryItem := "INSERT INTO Order_Items (order_id, product_id, quantity_of_item, SP) VALUES (?, ?, ?, ?)"
+	queryItem := "INSERT INTO Order_Items (order_id, product_id, quantity_of_item, selling_price) VALUES (?, ?, ?, ?)"
 	for _, item := range order.Items {
 		_, err := tx.Exec(queryItem, orderID, item.ProductID, item.Quantity, item.SellingPrice)
 		if err != nil {
