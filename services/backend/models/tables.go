@@ -216,5 +216,4 @@ var CreateTriggersQueries = []string{
 			END IF;
 		END IF;
 	END//`,
-	
 }

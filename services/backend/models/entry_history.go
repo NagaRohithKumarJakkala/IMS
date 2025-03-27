@@ -3,9 +3,10 @@ package models
 import (
 	connect "backend/initializers"
 	"database/sql"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 type BranchEntryHistory struct {
