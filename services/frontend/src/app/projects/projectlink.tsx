@@ -10,7 +10,7 @@ export default function ProjectLink({ projectName }) {
   return (
     <Link
       href={`/branches?user_id=${encodeURIComponent(userId)}`}
-      className=" max-h-[200] border border-stone-600 shadow-xl select-none m-4 text-center flex justify-center items-center text-white bg-teal-500 text-xl font-semibold hover:bg-teal-700 hover:text-white transition duration-300 cursor-pointer p-4 rounded-lg"
+      className=" max-h-[200] border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-teal-500 text-3xl font-semibold hover:bg-teal-700 hover:text-white transition hover:shadow-2xl hover:scale-105 duration-300 cursor-pointer p-4 rounded-lg"
     >
       {projectName}
     </Link>

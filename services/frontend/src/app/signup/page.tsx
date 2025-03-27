@@ -52,7 +52,7 @@ export default function SignupPage() {
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">Join Us</h1>
+              <h1 className="text-3xl font-serif font-bold text-gray-800 mb-2">Join Us</h1>
               <p className="text-gray-600">Create a new account</p>
             </div>
 
@@ -73,7 +73,7 @@ export default function SignupPage() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Username"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
+                  className="w-full pl-10 pr-4 py-3 text-black font-light border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                 />
               </div>
 
@@ -87,11 +87,11 @@ export default function SignupPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                   required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
+                  className="w-full pl-10 pr-4 py-3 text-black font-light border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
                 />
               </div>
 
-              <div className="relative">
+              {/* <div className="relative">
                 <select
                   value={levelOfAccess}
                   onChange={(e) => setLevelOfAccess(e.target.value)}
@@ -102,7 +102,7 @@ export default function SignupPage() {
                   <option value="customer">Customer</option>
                   <option value="supplier">Supplier</option>
                 </select>
-              </div>
+              </div> */}
 
               <button
                 type="submit"

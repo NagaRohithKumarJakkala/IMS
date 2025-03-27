@@ -100,9 +100,9 @@ const OrderForm = () => {
   };
 
   return (
-    <div className="p-5 border rounded-xl shadow-xl bg-blue-200 max-w-full mx-auto">
-      <h2 className="text-2xl text-slate-900 font-extrabold mb-4">
-        Create New Order
+    <div className="p-5 border rounded-xl shadow-xl bg-green-200 max-w-full mx-auto">
+      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
+        Place New Order
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -111,7 +111,7 @@ const OrderForm = () => {
           placeholder="Branch ID"
           value={order.branch_id}
           onChange={handleChange}
-          className="border p-2 w-full"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
         <input
@@ -120,17 +120,17 @@ const OrderForm = () => {
           placeholder="User ID"
           value={order.user_id}
           onChange={handleChange}
-          className="border p-2 w-full"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-gray-900">
+          <table className="min-w-full border border-pink-900">
             <thead>
               <tr className="bg-gray-200">
-                <th className="border px-4 py-2">Product ID</th>
-                <th className="border px-4 py-2">Quantity</th>
-                <th className="border px-4 py-2">Selling Price</th>
-                <th className="border px-4 py-2">Total</th>
+              <th className="border border-gray-300 text-black font-serif px-4 py-2">Product ID</th>
+              <th className="border border-gray-300 text-black font-serif px-4 py-2">Quantity</th>
+              <th className="border border-gray-300 text-black font-serif px-4 py-2">Selling Price</th>
+              <th className="border border-gray-300 text-black font-serif px-4 py-2">Total</th>
                 <th></th>
               </tr>
             </thead>
@@ -143,7 +143,7 @@ const OrderForm = () => {
                       name="product_id"
                       value={item.product_id}
                       onChange={(e) => handleChange(e, index)}
-                      className="border p-1 w-full"
+                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
                       required
                     />
                   </td>
@@ -154,7 +154,7 @@ const OrderForm = () => {
                       min="1"
                       value={item.quantity_of_item}
                       onChange={(e) => handleChange(e, index)}
-                      className="border p-1 w-full"
+                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
                       required
                     />
                   </td>
@@ -166,7 +166,7 @@ const OrderForm = () => {
                       step="0.01"
                       value={item.selling_price}
                       onChange={(e) => handleChange(e, index)}
-                      className="border p-1 w-full"
+                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
                       required
                     />
                   </td>
@@ -190,13 +190,13 @@ const OrderForm = () => {
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-500 text-white font-bold py-2 rounded-xl hover:bg-green-800"
+          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800"
         >
           + Add Item
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-bold py-2 rounded-xl hover:bg-orange-800"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-y-110 hover:shadow-2xl transition duration-300"
         >
           Submit Order
         </button>

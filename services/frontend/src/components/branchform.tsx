@@ -57,7 +57,7 @@ const BranchForm = () => {
           />
           <button
             type="submit"
-            className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:shadow-2xl"
+            className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-105 hover:shadow-2xl transition duration-300"
           >
             Submit
           </button>

@@ -17,18 +17,18 @@ const OrderHistoryForm = ({ branchId }) => {
   }, [branchId]);
 
   return (
-    <div className="p-4 relative">
-      <div className="absolute top-0 right-0 p-2 bg-gray-200 rounded-md shadow-md">
-        <span className="font-bold">Branch ID:</span> {branchId}
+    <div className="p-5 relative">
+      <div className="absolute top-0 right-0 p-1 bg-transparent rounded-md">
+      <span className="text-amber-400 font-bold">Branch ID:</span> {branchId}
       </div>
-      <h2 className="text-xl font-bold mb-4">Branch Sales History</h2>
+      <h2 className="text-yellow-300 text-xl font-bold mb-4">Branch Sales History</h2>
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             {columns.map((col, index) => (
               <th
                 key={index}
-                className="border border-gray-300 px-4 py-2 text-left"
+                className="text-indigo-900 border border-gray-300 px-4 py-2 text-left"
               >
                 {col}
               </th>
