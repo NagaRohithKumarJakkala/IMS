@@ -101,3 +101,15 @@ CREATE TABLE IF NOT EXISTS Stock_Log (
     change_type ENUM('INCREASE', 'DECREASE'),
     change_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+--want a table which will store announcements which will be sent to the logged in
+--it will contain announcements such as stock critically low and other examples being some string
+--will be stored in this table
+
+CREATE TABLE IF NOT EXISTS Announcement_Table (
+    announcement_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    branch_id VARCHAR(16) NOT NULL,
+    announcement_text VARCHAR(512) NOT NULL,
+    announcement_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE
+);

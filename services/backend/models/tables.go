@@ -104,6 +104,15 @@ var CreateTablesQueries = []string{
 		change_type ENUM('INCREASE', 'DECREASE'),
 		change_time DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`,
+
+	//announcement table
+	`CREATE TABLE IF NOT EXISTS Announcement_Table (
+		announcement_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+		branch_id VARCHAR(16) NOT NULL,
+		announcement_text VARCHAR(512) NOT NULL,
+		announcement_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+		FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE
+	);`,
 }
 
 var CreateTriggersQueries = []string{
@@ -182,4 +191,30 @@ var CreateTriggersQueries = []string{
 		INSERT INTO Stock_Log (product_id, branch_id, quantity_change, change_type)
 		VALUES (NEW.product_id, (SELECT branch_id FROM Order_Table WHERE order_id = NEW.order_id), -NEW.quantity_of_item, 'DECREASE');
 	END;`,
+
+	// Trigger to announce stock is below threshold
+	`CREATE TRIGGER stock_less_than_20 
+	AFTER INSERT ON Stock_Log 
+	FOR EACH ROW
+	BEGIN
+		DECLARE current_quantity INT;
+		DECLARE product_name VARCHAR(128);
+
+		IF NEW.change_type = 'DECREASE' THEN
+
+			SELECT quantity_of_item INTO current_quantity FROM Stock_Table 
+			WHERE product_id = NEW.product_id AND branch_id = NEW.branch_id LIMIT 1;
+
+			IF current_quantity < 20 THEN
+
+				SELECT product_name INTO product_name FROM Product_Table 
+				WHERE product_id = NEW.product_id LIMIT 1;
+
+				INSERT INTO Announcement_Table (branch_id, announcement_text)
+				VALUES (NEW.branch_id, CONCAT('Stock of ', product_name, ' (', NEW.product_id, ') is critically low(', current_quantity,')'));
+
+			END IF;
+		END IF;
+	END//`,
+	
 }
