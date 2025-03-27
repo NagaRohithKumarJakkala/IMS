@@ -5,7 +5,7 @@ export default function Home() {
   const projectNames = ["IMS"];
 
   return (
-    <div className="bg-blue-400 min-h-screen max-h-screen overflow-y-auto bg-[url('/blue.png')] bg-cover">
+    <div className="bg-blue-400 min-h-screen max-h-screen overflow-y-auto bg-gradient-to-br from-gray-100 to-orange-200 bg-cover">
       <TopBar />
       <div className="border border-white m-4 rounded-xl shadow-2xl bg-white">
         <h2 className="text-3xl font-semibold text-slate-900 font-serif m-4">

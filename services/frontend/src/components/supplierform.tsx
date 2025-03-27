@@ -27,11 +27,11 @@ const SupplierForm = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e : any) => {
     e.preventDefault();
     const formattedData = {
       supplier_id: parseInt(formData.supplier_id, 10),
@@ -41,8 +41,8 @@ const SupplierForm = () => {
   };
 
   return (
-    <div className="p-4 border rounded-lg shadow-md bg-white max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Add New Supplier</h2>
+    <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
+      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add New Supplier</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="number"
@@ -50,7 +50,7 @@ const SupplierForm = () => {
           placeholder="Supplier ID"
           value={formData.supplier_id}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
         <input
@@ -59,12 +59,12 @@ const SupplierForm = () => {
           placeholder="Supplier Name"
           value={formData.supplier_name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-105 hover:shadow-2xl transition duration-300"
         >
           Submit
         </button>

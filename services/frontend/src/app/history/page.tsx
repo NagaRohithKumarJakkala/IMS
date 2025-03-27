@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <div className="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-400 flex flex-col m-4 rounded">
+      <div className="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-400 flex flex-col m-4 rounded-lg">
       <div className="text-3xl font-serif font-semibold text-white m-6 col-span-2">View History</div>
         <div className="border border-white m-4 rounded">
           <NavLink

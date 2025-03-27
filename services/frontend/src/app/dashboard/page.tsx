@@ -13,6 +13,7 @@ export default function Home() {
   return (
     <>
       <TopBar />
+      {/* bg-gradient-to-r from-purple-800 to-blue-600 */}
       <div className="bg-gradient-to-br from-blue-700 via-blue-500 to-blue-400 min-h-screen flex flex-col sm:grid sm:grid-cols-2 m-4 p-4 rounded-lg shadow-lg">
         <div className="text-3xl font-serif font-semibold text-white m-4 col-span-2">Dashboard</div>
         <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-lg shadow-md">
