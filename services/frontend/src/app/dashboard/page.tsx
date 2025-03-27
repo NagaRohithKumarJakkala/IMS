@@ -13,28 +13,28 @@ export default function Home() {
   return (
     <>
       <TopBar />
-      <div className="border border-white flex flex-col sm:grid sm:grid-cols-2 m-4 rounded">
-        <div className="text-2xl m-4 col-span-2">DashBoard</div>
-        <div className="border border-white m-4 rounded">
+      <div className="bg-gradient-to-br from-blue-200 via-blue-400 to-blue-600 min-h-screen flex flex-col sm:grid sm:grid-cols-2 m-4 p-4 rounded-lg shadow-lg">
+        <div className="text-3xl font-semibold text-white m-4 col-span-2">Dashboard</div>
+        <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-lg shadow-md">
           <NavLink
             href={`/products/view?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
             text="Stock details"
           />
           <NavLink
             href={`/products/create?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="add Product"
+            text="Add Product"
           />
           <NavLink
             href={`/products/add?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="new Entry"
+            text="New Entry"
           />
           <NavLink
             href={`/products/sell?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text=" new Order"
+            text="New Order"
           />
           <NavLink
             href={`/supplier?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
-            text="Supplier details"
+            text="Supplier Details"
           />
           <NavLink
             href={`/history?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
@@ -49,9 +49,9 @@ export default function Home() {
             text="Refill Recommendations"
           />
         </div>
-        <div className="border border-white m-4 rounded select-none">
-          <h3 className="m-2"> Announcements</h3>
-          <div className="border border-white m-4"></div>
+        <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-lg shadow-md select-none">
+          <h3 className="text-xl font-semibold text-white">Announcements</h3>
+          <div className="border-t border-white mt-2"></div>
         </div>
       </div>
     </>
