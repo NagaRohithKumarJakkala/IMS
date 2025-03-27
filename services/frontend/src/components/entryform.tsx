@@ -54,9 +54,11 @@ const EntryForm = () => {
     e.preventDefault();
     const formattedEntry = {
       ...entry,
+      supplier_id: parseInt(entry.supplier_id, 10), // Convert to int
+      user_id: parseInt(entry.user_id, 10), // Convert to int
       items: entry.items.map((item) => ({
         ...item,
-        quantity_of_item: parseInt(item.quantity_of_item),
+        quantity_of_item: parseInt(item.quantity_of_item, 10),
         cost_of_item: parseFloat(item.cost_of_item),
       })),
     };

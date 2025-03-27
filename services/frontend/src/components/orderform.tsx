@@ -4,7 +4,7 @@ import { useState } from "react";
 type OrderItem = {
   product_id: string;
   quantity_of_item: number;
-  SP: number;
+  selling_price: number;
 };
 
 type OrderData = {
@@ -17,30 +17,42 @@ const OrderForm = () => {
   const [order, setOrder] = useState<OrderData>({
     branch_id: "",
     user_id: "",
-    items: [{ product_id: "", quantity_of_item: 0, SP: 0 }],
+    items: [{ product_id: "", quantity_of_item: 1, selling_price: 0 }],
   });
 
   const addRow = () => {
     setOrder({
       ...order,
-      items: [...order.items, { product_id: "", quantity_of_item: 0, SP: 0 }],
+      items: [
+        ...order.items,
+        { product_id: "", quantity_of_item: 1, selling_price: 0 },
+      ],
     });
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number | null = null
+    index: number | null = null,
   ) => {
     const { name, value } = e.target;
+
     if (index !== null) {
       const updatedItems = [...order.items];
       updatedItems[index] = {
         ...updatedItems[index],
-        [name]: name === "quantity_of_item" || name === "SP" ? Number(value) : value,
+        [name]:
+          name === "quantity_of_item" || name === "selling_price"
+            ? value === ""
+              ? 0
+              : Number(value) // Ensures numeric values
+            : value,
       };
       setOrder({ ...order, items: updatedItems });
     } else {
-      setOrder({ ...order, [name]: value });
+      setOrder({
+        ...order,
+        [name]: name === "user_id" ? value.replace(/\D/g, "") : value, // Ensures user_id remains numeric
+      });
     }
   };
 
@@ -50,18 +62,37 @@ const OrderForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const formattedOrder = {
+      ...order,
+      user_id: parseInt(order.user_id, 10), // Ensure user_id is an integer
+      items: order.items.map((item) => ({
+        ...item,
+        quantity_of_item: parseInt(item.quantity_of_item.toString(), 10),
+        selling_price: parseFloat(item.selling_price.toString()),
+      })),
+    };
+
     try {
-      const response = await fetch("/api/order", {
+      const response = await fetch("http://localhost:8080/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(order),
+        body: JSON.stringify(formattedOrder),
       });
 
       if (!response.ok) {
         throw new Error("Failed to submit order");
       }
 
-      alert("Order submitted successfully!");
+      const data = await response.json();
+      alert("Order submitted successfully: " + JSON.stringify(data));
+
+      // Reset form after submission
+      setOrder({
+        branch_id: "",
+        user_id: "",
+        items: [{ product_id: "", quantity_of_item: 1, selling_price: 0 }],
+      });
     } catch (error) {
       console.error("Error:", error);
       alert("Error submitting order");
@@ -70,7 +101,9 @@ const OrderForm = () => {
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-blue-200 max-w-full mx-auto">
-      <h2 className="text-2xl text-slate-900 font-extrabold mb-4">Create New Order</h2>
+      <h2 className="text-2xl text-slate-900 font-extrabold mb-4">
+        Create New Order
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -128,17 +161,17 @@ const OrderForm = () => {
                   <td className="border px-2 py-1">
                     <input
                       type="number"
-                      name="SP"
+                      name="selling_price"
                       min="0"
                       step="0.01"
-                      value={item.SP}
+                      value={item.selling_price}
                       onChange={(e) => handleChange(e, index)}
                       className="border p-1 w-full"
                       required
                     />
                   </td>
                   <td className="border px-2 py-1">
-                    {(item.quantity_of_item * item.SP).toFixed(2)}
+                    {(item.quantity_of_item * item.selling_price).toFixed(2)}
                   </td>
                   <td>
                     <button

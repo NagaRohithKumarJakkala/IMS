@@ -1,16 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const BranchHistoryForm = ({ branchId }) => {
+const OrderHistoryForm = ({ branchId }) => {
   const columns = ["Order ID", "Timestamp", "User ID"];
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
     if (branchId) {
-      fetch(`/api/branch-sale-history/${branchId}`)
+      fetch(`http://localhost:8080/history/orders?branch_id=${branchId}`)
         .then((res) => res.json())
         .then((data) => setHistory(data))
-        .catch((error) => console.error("Error fetching branch sale history:", error));
+        .catch((error) =>
+          console.error("Error fetching branch sale history:", error),
+        );
     }
   }, [branchId]);
 
@@ -24,7 +26,10 @@ const BranchHistoryForm = ({ branchId }) => {
         <thead>
           <tr className="bg-gray-200">
             {columns.map((col, index) => (
-              <th key={index} className="border border-gray-300 px-4 py-2 text-left">
+              <th
+                key={index}
+                className="border border-gray-300 px-4 py-2 text-left"
+              >
                 {col}
               </th>
             ))}
@@ -34,14 +39,22 @@ const BranchHistoryForm = ({ branchId }) => {
           {history.length > 0 ? (
             history.map((record) => (
               <tr key={record.order_id} className="border-b">
-                <td className="border border-gray-300 px-4 py-2">{record.order_id}</td>
-                <td className="border border-gray-300 px-4 py-2">{record.timestamp}</td>
-                <td className="border border-gray-300 px-4 py-2">{record.user_id}</td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {record.order_id}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {record.timestamp}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {record.user_id}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={3} className="text-center p-4">No sale history available for this branch</td>
+              <td colSpan={3} className="text-center p-4">
+                No sale history available for this branch
+              </td>
             </tr>
           )}
         </tbody>
@@ -50,4 +63,4 @@ const BranchHistoryForm = ({ branchId }) => {
   );
 };
 
-export default BranchHistoryForm;
+export default OrderHistoryForm;

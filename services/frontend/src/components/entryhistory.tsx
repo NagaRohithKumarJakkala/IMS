@@ -1,19 +1,27 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const HistoryForm = () => {
-  const columns = ["Order ID", "Timestamp", "User ID", "Branch ID"];
+const BranchEntryHistoryForm = ({ branchId }) => {
+  const columns = ["Entry ID", "Timestamp", "User ID", "Supplier ID"];
   const [history, setHistory] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/history/orders")
-      .then((res) => res.json())
-      .then((data) => setHistory(data))
-      .catch((error) => console.error("Error fetching sale history:", error));
-  }, []);
+    if (branchId) {
+      fetch(`http://localhost:8080/history/entries?branch_id=${branchId}`)
+        .then((res) => res.json())
+        .then((data) => setHistory(data))
+        .catch((error) =>
+          console.error("Error fetching branch entry history:", error),
+        );
+    }
+  }, [branchId]);
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
+      <div className="absolute top-0 right-0 p-2 bg-gray-200 rounded-md shadow-md">
+        <span className="font-bold">Branch ID:</span> {branchId}
+      </div>
+      <h2 className="text-xl font-bold mb-4">Branch Entry History</h2>
       <table className="w-full border-collapse border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
@@ -30,9 +38,9 @@ const HistoryForm = () => {
         <tbody>
           {history.length > 0 ? (
             history.map((record) => (
-              <tr key={record.order_id} className="border-b">
+              <tr key={record.entry_id} className="border-b">
                 <td className="border border-gray-300 px-4 py-2">
-                  {record.order_id}
+                  {record.entry_id}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {record.timestamp}
@@ -41,14 +49,14 @@ const HistoryForm = () => {
                   {record.user_id}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  {record.branch_id}
+                  {record.supplier_id}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
               <td colSpan={4} className="text-center p-4">
-                No sale history available
+                No entry history available for this branch
               </td>
             </tr>
           )}
@@ -58,4 +66,4 @@ const HistoryForm = () => {
   );
 };
 
-export default HistoryForm;
+export default BranchEntryHistoryForm;

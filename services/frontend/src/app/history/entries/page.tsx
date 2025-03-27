@@ -1,9 +1,9 @@
-import OrderHistoryForm from "../../../components/orderhistory";
+import EntryHistoryForm from "../../../components/entryhistory";
 
 export default function Home() {
   return (
     <div className="flex items-center justify-center min-h-screen min-w-full bg-[url('/dino-green.png')] bg-cover">
-      <OrderHistoryForm branchId="1111" />
+      <EntryHistoryForm branchId="1111" />
     </div>
   );
 }
