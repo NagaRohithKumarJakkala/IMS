@@ -16,17 +16,25 @@ const authOptions: NextAuthOptions = {
         }
 
         try {
+          // Send credentials to backend for validation
           const response = await axios.post(
-            `${process.env.GO_BACKEND_URL}/auth/login`,
-            { username: credentials.username, password: credentials.password },
-            { headers: { "Content-Type": "application/json" } },
+            `${process.env.GO_BACKEND_URL}/login`,
+            {
+              username: credentials.username,
+              password: credentials.password, // Send directly, backend handles hashing
+            },
+            {
+              headers: { "Content-Type": "application/json" },
+            },
           );
 
-          if (response.data.success) {
+          if (response.data.success && response.data.user) {
+            const user = response.data.user;
+
             return {
-              id: response.data.user_id.toString(),
-              username: credentials.username,
-              level_of_access: response.data.level_of_access,
+              id: user.id.toString(),
+              username: user.username,
+              level_of_access: user.level_of_access,
             };
           }
 
@@ -38,6 +46,13 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+    signOut: "/signout",
+    error: "/error",
+    verifyRequest: "/verify-request",
+    newUser: "/welcome",
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -48,14 +63,18 @@ const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.level_of_access = token.level_of_access;
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.username = token.username;
+        session.user.level_of_access = token.level_of_access;
+      }
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+  },
 };
 
 const handler = NextAuth(authOptions);

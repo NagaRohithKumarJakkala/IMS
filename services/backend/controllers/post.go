@@ -13,4 +13,6 @@ func post(router *gin.Engine) {
 	router.POST("/entry", models.InsertEntry)
 	router.POST("/user", models.InsertUser)
 	router.POST("/supplier", models.InsertSupplier)
+	router.POST("/signup", models.SignupHandler)
+	router.POST("/login", models.LoginHandler)
 }

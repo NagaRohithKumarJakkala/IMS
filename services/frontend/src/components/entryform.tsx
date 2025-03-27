@@ -9,6 +9,22 @@ const EntryForm = () => {
     items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
   });
 
+  const createEntry = async (entryData) => {
+    const response = await fetch("http://localhost:8080/entry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(entryData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to create entry");
+    }
+
+    return response.json();
+  };
+
   const addRow = () => {
     setEntry({
       ...entry,
@@ -34,9 +50,29 @@ const EntryForm = () => {
     setEntry({ ...entry, items: entry.items.filter((_, i) => i !== index) });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(entry);
+    const formattedEntry = {
+      ...entry,
+      items: entry.items.map((item) => ({
+        ...item,
+        quantity_of_item: parseInt(item.quantity_of_item),
+        cost_of_item: parseFloat(item.cost_of_item),
+      })),
+    };
+    try {
+      const data = await createEntry(formattedEntry);
+      alert("Entry created: " + JSON.stringify(data));
+      setEntry({
+        supplier_id: "",
+        branch_id: "",
+        user_id: "",
+        items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Error creating entry");
+    }
   };
 
   return (
@@ -76,46 +112,40 @@ const EntryForm = () => {
           <table className="min-w-full border border-pink-900">
             <thead>
               <tr className="bg-slate-200">
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Product ID
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Quantity
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                <th className="border border-gray-300 px-4 py-2">Product ID</th>
+                <th className="border border-gray-300 px-4 py-2">Quantity</th>
+                <th className="border border-gray-300 px-4 py-2">
                   Cost per Item
                 </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Total Cost
-                </th>
+                <th className="border border-gray-300 px-4 py-2">Total Cost</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {entry.items.map((item, index) => (
                 <tr key={index} className="border-b">
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className="border px-2 py-1">
                     <input
                       type="text"
                       name="product_id"
                       value={item.product_id}
                       onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
+                      className="w-full px-2 py-1 border rounded-lg"
                       required
                     />
                   </td>
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className="border px-2 py-1">
                     <input
                       type="number"
                       name="quantity_of_item"
                       min="1"
                       value={item.quantity_of_item}
                       onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
+                      className="w-full px-2 py-1 border rounded-lg"
                       required
                     />
                   </td>
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className="border px-2 py-1">
                     <input
                       type="number"
                       name="cost_of_item"
@@ -123,11 +153,11 @@ const EntryForm = () => {
                       step="0.01"
                       value={item.cost_of_item}
                       onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
+                      className="w-full px-2 py-1 border rounded-lg"
                       required
                     />
                   </td>
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className="border px-2 py-1">
                     {item.quantity_of_item && item.cost_of_item
                       ? (item.quantity_of_item * item.cost_of_item).toFixed(2)
                       : "0.00"}
@@ -149,13 +179,13 @@ const EntryForm = () => {
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800"
+          className="w-full bg-green-500 text-white py-2 rounded-xl hover:bg-green-800"
         >
           + Add Item
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:shadow-2xl"
+          className="w-full bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-800"
         >
           Submit Entry
         </button>

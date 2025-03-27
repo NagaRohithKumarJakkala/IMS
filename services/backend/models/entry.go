@@ -2,10 +2,8 @@ package models
 
 import (
 	connect "backend/initializers"
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -79,57 +77,6 @@ func InsertEntry(c *gin.Context) {
 			tx.Rollback()
 			log.Println("Error inserting entry item:", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert entry item"})
-			return
-		}
-	}
-
-	// Update stock after successful entry
-	updateStockQuery := `
-		UPDATE Stock_Table 
-		SET quantity_of_item = quantity_of_item + ? 
-		WHERE product_id = ? AND branch_id = ?
-	`
-	insertStockQuery := `
-		INSERT INTO Stock_Table (product_id, branch_id, quantity_of_item) 
-		SELECT ?, ?, ? 
-		WHERE NOT EXISTS (
-			SELECT 1 FROM Stock_Table 
-			WHERE product_id = ? AND branch_id = ?
-		)
-	`
-	for _, item := range entry.Items {
-		// First, try to update existing stock
-		res, err := tx.Exec(updateStockQuery, item.Quantity, item.ProductID, entry.BranchID)
-		if err != nil {
-			tx.Rollback()
-			log.Println("Error updating stock:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update stock"})
-			return
-		}
-
-		// Check if any row was affected; if not, insert new stock
-		rowsAffected, _ := res.RowsAffected()
-		if rowsAffected == 0 {
-			_, err = tx.Exec(insertStockQuery, item.ProductID, entry.BranchID, item.Quantity, item.ProductID, entry.BranchID)
-			if err != nil {
-				tx.Rollback()
-				log.Println("Error inserting stock:", err)
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert stock"})
-				return
-			}
-		}
-
-		// Log stock change
-		logStockQuery := `
-			INSERT INTO Stock_Log 
-			(product_id, branch_id, quantity_change, change_type) 
-			VALUES (?, ?, ?, 'INCREASE')
-		`
-		_, err = tx.Exec(logStockQuery, item.ProductID, entry.BranchID, item.Quantity)
-		if err != nil {
-			tx.Rollback()
-			log.Println("Error logging stock change:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to log stock change"})
 			return
 		}
 	}

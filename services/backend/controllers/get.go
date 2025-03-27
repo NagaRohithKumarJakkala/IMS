@@ -19,4 +19,5 @@ func get(router *gin.Engine) {
 	router.GET("/product", models.GetProductDetails)
 	router.GET("/products", models.GetAllProductsInBranch)
 	router.GET("/products/branch", models.GetProductsByNameInBranch)
+	router.GET("/history/orders", models.GetBranchSaleHistory)
 }

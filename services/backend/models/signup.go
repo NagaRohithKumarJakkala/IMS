@@ -11,7 +11,7 @@ import (
 
 type SignupRequest struct {
 	Username      string `json:"username"`
-	Password      string `json:"password"`
+	Password      string `json:"password"` // Receives raw password from frontend
 	LevelOfAccess string `json:"level_of_access"`
 }
 
@@ -28,7 +28,7 @@ func SignupHandler(c *gin.Context) {
 		return
 	}
 
-	// Hash password before storing
+	// Hash raw password before storing
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println("Error hashing password:", err)
@@ -36,7 +36,7 @@ func SignupHandler(c *gin.Context) {
 		return
 	}
 
-	// Insert user into database
+	// Insert user into database with hashed password
 	query := "INSERT INTO User_Table (username, user_password, level_of_access) VALUES (?, ?, ?)"
 	_, err = connect.Db.Exec(query, req.Username, string(hashedPassword), req.LevelOfAccess)
 	if err != nil {

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import bcrypt from "bcryptjs";
 import { User, Lock, LogIn } from "lucide-react";
 
 export default function SignupPage() {
@@ -25,14 +24,13 @@ export default function SignupPage() {
     }
 
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const response = await fetch("/api/auth/signup", {
+      // Send raw password to backend for hashing
+      const response = await fetch("http://localhost:8080/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username,
-          password: hashedPassword,
+          password, // Sending raw password, backend will hash it
           level_of_access: levelOfAccess,
         }),
       });
@@ -101,6 +99,8 @@ export default function SignupPage() {
                 >
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
+                  <option value="customer">Customer</option>
+                  <option value="supplier">Supplier</option>
                 </select>
               </div>
 

@@ -2,9 +2,9 @@ package models
 
 import (
 	connect "backend/initializers"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"github.com/gin-gonic/gin"
 )
 
 type BranchSaleHistory struct {
@@ -15,7 +15,7 @@ type BranchSaleHistory struct {
 }
 
 func GetBranchSaleHistory(c *gin.Context) {
-	branchID := c.Param("branch_id")
+	branchID := c.Query("branch_id")
 
 	rows, err := connect.Db.Query("SELECT order_id, timestamp, user_id, branch_id FROM Sales_Table WHERE branch_id = ? ORDER BY timestamp DESC LIMIT 50", branchID)
 	if err != nil {

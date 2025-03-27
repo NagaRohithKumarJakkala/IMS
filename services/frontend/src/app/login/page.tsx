@@ -28,7 +28,7 @@ export default function LoginPage() {
         setError("Invalid username or password");
         setIsLoading(false);
       } else {
-        router.push("/dashboard"); // Redirect to dashboard after login
+        router.push("/projects"); // Redirect to dashboard after login
       }
     } catch (err) {
       setError("An unexpected error occurred");
