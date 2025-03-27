@@ -38,7 +38,7 @@ export default function ProductsPage() {
           : `branch_id=${encodeURIComponent(branchId)}`;
 
         const data = await fetchProtectedData<{ products: Product[] }>(
-          "products",
+          query.trim() ? "product-in-branch" : "product-all-in-branch",
           queryParams,
         );
         setProducts(data.products || []);

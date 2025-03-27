@@ -1,115 +1,99 @@
 "use client";
+
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { fetchProtectedData } from "@/utils/api";
 
-type OrderItem = {
-  product_id: string;
-  quantity_of_item: number;
-  selling_price: number;
-};
-
-type OrderData = {
-  branch_id: string;
-  user_id: string;
-  items: OrderItem[];
-};
-
-const OrderForm = () => {
-  const [order, setOrder] = useState<OrderData>({
+const EntryForm = () => {
+  const [entry, setEntry] = useState({
+    supplier_id: "",
     branch_id: "",
     user_id: "",
-    items: [{ product_id: "", quantity_of_item: 1, selling_price: 0 }],
+    items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
   });
 
+  const createEntry = async (entryData) => {
+    try {
+      const data = await fetchProtectedData("entry", "", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(entryData),
+      });
+      alert("Entry created: " + JSON.stringify(data));
+      setEntry({
+        supplier_id: "",
+        branch_id: "",
+        user_id: "",
+        items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
+      });
+    } catch (error) {
+      console.error("Error creating entry:", error);
+      alert("Error creating entry");
+    }
+  };
+
+  const handleChange = (e, index = null) => {
+    const { name, value } = e.target;
+    if (index !== null) {
+      const updatedItems = [...entry.items];
+      updatedItems[index][name] = value;
+      setEntry({ ...entry, items: updatedItems });
+    } else {
+      setEntry({ ...entry, [name]: value });
+    }
+  };
+
   const addRow = () => {
-    setOrder({
-      ...order,
+    setEntry({
+      ...entry,
       items: [
-        ...order.items,
-        { product_id: "", quantity_of_item: 1, selling_price: 0 },
+        ...entry.items,
+        { product_id: "", quantity_of_item: "", cost_of_item: "" },
       ],
     });
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number | null = null,
-  ) => {
-    const { name, value } = e.target;
-
-    if (index !== null) {
-      const updatedItems = [...order.items];
-      updatedItems[index] = {
-        ...updatedItems[index],
-        [name]:
-          name === "quantity_of_item" || name === "selling_price"
-            ? value === ""
-              ? 0
-              : Number(value) // Ensures numeric values
-            : value,
-      };
-      setOrder({ ...order, items: updatedItems });
-    } else {
-      setOrder({
-        ...order,
-        [name]: name === "user_id" ? value.replace(/\D/g, "") : value, // Ensures user_id remains numeric
-      });
-    }
+  const removeRow = (index) => {
+    setEntry({ ...entry, items: entry.items.filter((_, i) => i !== index) });
   };
 
-  const removeRow = (index: number) => {
-    setOrder({ ...order, items: order.items.filter((_, i) => i !== index) });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formattedOrder = {
-      ...order,
-      user_id: parseInt(order.user_id, 10), // Ensure user_id is an integer
-      items: order.items.map((item) => ({
+    const formattedEntry = {
+      ...entry,
+      supplier_id: parseInt(entry.supplier_id, 10),
+      user_id: parseInt(entry.user_id, 10),
+      items: entry.items.map((item) => ({
         ...item,
-        quantity_of_item: parseInt(item.quantity_of_item.toString(), 10),
-        selling_price: parseFloat(item.selling_price.toString()),
+        quantity_of_item: parseInt(item.quantity_of_item, 10),
+        cost_of_item: parseFloat(item.cost_of_item),
       })),
     };
-
-    try {
-      const response = await fetch("http://localhost:8080/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formattedOrder),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit order");
-      }
-
-      const data = await response.json();
-      alert("Order submitted successfully: " + JSON.stringify(data));
-
-      // Reset form after submission
-      setOrder({
-        branch_id: "",
-        user_id: "",
-        items: [{ product_id: "", quantity_of_item: 1, selling_price: 0 }],
-      });
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error submitting order");
-    }
+    await createEntry(formattedEntry);
   };
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-white max-w-full mx-auto">
       <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
-        Place New Order
+        Add Entry Details
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="supplier_id"
+          placeholder="Supplier ID"
+          value={entry.supplier_id}
+          onChange={handleChange}
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          required
+        />
+        <input
+          type="text"
           name="branch_id"
           placeholder="Branch ID"
-          value={order.branch_id}
+          value={entry.branch_id}
           onChange={handleChange}
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
@@ -118,7 +102,7 @@ const OrderForm = () => {
           type="text"
           name="user_id"
           placeholder="User ID"
-          value={order.user_id}
+          value={entry.user_id}
           onChange={handleChange}
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
@@ -126,18 +110,26 @@ const OrderForm = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full border border-pink-900">
             <thead>
-              <tr className="bg-gray-200">
-              <th className="border border-gray-300 text-black font-serif px-4 py-2">Product ID</th>
-              <th className="border border-gray-300 text-black font-serif px-4 py-2">Quantity</th>
-              <th className="border border-gray-300 text-black font-serif px-4 py-2">Selling Price</th>
-              <th className="border border-gray-300 text-black font-serif px-4 py-2">Total</th>
+              <tr className="bg-slate-200">
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Product ID
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Quantity
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Cost per Item
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Total Cost
+                </th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {order.items.map((item, index) => (
+              {entry.items.map((item, index) => (
                 <tr key={index} className="border-b">
-                  <td className="border px-2 py-1">
+                  <td className="border border-gray-300 px-2 py-1">
                     <input
                       type="text"
                       name="product_id"
@@ -147,7 +139,7 @@ const OrderForm = () => {
                       required
                     />
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="border border-gray-300 px-2 py-1">
                     <input
                       type="number"
                       name="quantity_of_item"
@@ -158,20 +150,20 @@ const OrderForm = () => {
                       required
                     />
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="border border-gray-300 px-2 py-1">
                     <input
                       type="number"
-                      name="selling_price"
+                      name="cost_of_item"
                       min="0"
                       step="0.01"
-                      value={item.selling_price}
+                      value={item.cost_of_item}
                       onChange={(e) => handleChange(e, index)}
                       className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
                       required
                     />
                   </td>
-                  <td className="border px-2 py-1">
-                    {(item.quantity_of_item * item.selling_price).toFixed(2)}
+                  <td className="border border-gray-300 px-2 py-1">
+                    {(item.quantity_of_item * item.cost_of_item).toFixed(2)}
                   </td>
                   <td>
                     <button
@@ -196,13 +188,13 @@ const OrderForm = () => {
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-y-110 hover:shadow-2xl transition duration-300"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800"
         >
-          Submit Order
+          Submit Entry
         </button>
       </form>
     </div>
   );
 };
 
-export default OrderForm;
+export default EntryForm;

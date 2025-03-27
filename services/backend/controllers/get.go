@@ -31,6 +31,9 @@ func get(router *gin.Engine) {
 	{
 		customerGroup.GET("/allproducts", models.GetAllProducts)
 		customerGroup.GET("/product", models.GetProductDetails)
+
+		customerGroup.GET("/product-in-branch", models.GetProductsByNameInBranch)
+		customerGroup.GET("/product-all-in-branch", models.GetAllProductsInBranch)
 	}
 
 	auditorGroup := router.Group("/")

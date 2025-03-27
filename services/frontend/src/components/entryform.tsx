@@ -1,5 +1,8 @@
 "use client";
+
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { fetchProtectedData } from "@/utils/api";
 
 const EntryForm = () => {
   const [entry, setEntry] = useState({
@@ -10,29 +13,25 @@ const EntryForm = () => {
   });
 
   const createEntry = async (entryData) => {
-    const response = await fetch("http://localhost:8080/entry", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(entryData),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to create entry");
+    try {
+      const data = await fetchProtectedData("entry", "", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(entryData),
+      });
+      alert("Entry created: " + JSON.stringify(data));
+      setEntry({
+        supplier_id: "",
+        branch_id: "",
+        user_id: "",
+        items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
+      });
+    } catch (error) {
+      console.error("Error creating entry:", error);
+      alert("Error creating entry");
     }
-
-    return response.json();
-  };
-
-  const addRow = () => {
-    setEntry({
-      ...entry,
-      items: [
-        ...entry.items,
-        { product_id: "", quantity_of_item: "", cost_of_item: "" },
-      ],
-    });
   };
 
   const handleChange = (e, index = null) => {
@@ -46,6 +45,16 @@ const EntryForm = () => {
     }
   };
 
+  const addRow = () => {
+    setEntry({
+      ...entry,
+      items: [
+        ...entry.items,
+        { product_id: "", quantity_of_item: "", cost_of_item: "" },
+      ],
+    });
+  };
+
   const removeRow = (index) => {
     setEntry({ ...entry, items: entry.items.filter((_, i) => i !== index) });
   };
@@ -54,27 +63,15 @@ const EntryForm = () => {
     e.preventDefault();
     const formattedEntry = {
       ...entry,
-      supplier_id: parseInt(entry.supplier_id, 10), // Convert to int
-      user_id: parseInt(entry.user_id, 10), // Convert to int
+      supplier_id: parseInt(entry.supplier_id, 10),
+      user_id: parseInt(entry.user_id, 10),
       items: entry.items.map((item) => ({
         ...item,
         quantity_of_item: parseInt(item.quantity_of_item, 10),
         cost_of_item: parseFloat(item.cost_of_item),
       })),
     };
-    try {
-      const data = await createEntry(formattedEntry);
-      alert("Entry created: " + JSON.stringify(data));
-      setEntry({
-        supplier_id: "",
-        branch_id: "",
-        user_id: "",
-        items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
-      });
-    } catch (error) {
-      console.error(error);
-      alert("Error creating entry");
-    }
+    await createEntry(formattedEntry);
   };
 
   return (
@@ -114,10 +111,18 @@ const EntryForm = () => {
           <table className="min-w-full border border-pink-900">
             <thead>
               <tr className="bg-slate-200">
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">Product ID</th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">Quantity</th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">Cost per Item</th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">Total Cost</th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Product ID
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Quantity
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Cost per Item
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Total Cost
+                </th>
                 <th></th>
               </tr>
             </thead>
@@ -130,7 +135,7 @@ const EntryForm = () => {
                       name="product_id"
                       value={item.product_id}
                       onChange={(e) => handleChange(e, index)}
-                       className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
+                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
                       required
                     />
                   </td>
@@ -158,11 +163,7 @@ const EntryForm = () => {
                     />
                   </td>
                   <td className="border border-gray-300 px-2 py-1">
-                      <div className="bg-white text-black font-medium px-2 py-1 rounded-lg shadow-md inline-block">
-                      {item.quantity_of_item && item.cost_of_item
-                        ? (item.quantity_of_item * item.cost_of_item).toFixed(2)
-                        : "0.00"}
-                      </div>
+                    {(item.quantity_of_item * item.cost_of_item).toFixed(2)}
                   </td>
                   <td>
                     <button
@@ -187,7 +188,7 @@ const EntryForm = () => {
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-y-110 hover:shadow-2xl transition duration-300"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800"
         >
           Submit Entry
         </button>

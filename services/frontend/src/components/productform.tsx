@@ -1,5 +1,8 @@
 "use client";
+
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { fetchProtectedData } from "@/utils/api";
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -11,20 +14,21 @@ const ProductForm = () => {
     mrp: "",
     selling_price: "",
   });
-  const createProduct = async (formData : any) => {
-    const response = await fetch("http://localhost:8080/products", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
 
-    if (!response.ok) {
-      throw new Error("Failed to create product");
+  const createProduct = async (formData) => {
+    try {
+      const data = await fetchProtectedData("products", "", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      alert("Product created: " + JSON.stringify(data));
+    } catch (error) {
+      console.error("Error creating product:", error);
+      alert("Error creating product");
     }
-
-    return response.json();
   };
 
   const handleChange = (e) => {
@@ -40,13 +44,7 @@ const ProductForm = () => {
       selling_price: parseFloat(formData.selling_price),
     };
 
-    try {
-      const data = await createProduct(formattedData);
-      alert("Product created: " + JSON.stringify(data));
-    } catch (error) {
-      console.error(error);
-      alert("Error creating product");
-    }
+    await createProduct(formattedData);
 
     setFormData({
       product_id: "",
@@ -61,7 +59,9 @@ const ProductForm = () => {
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
-      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add Product</h2>
+      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
+        Add Product
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
