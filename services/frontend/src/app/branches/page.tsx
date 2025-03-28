@@ -59,7 +59,7 @@ export default function Home() {
             <Link
               href="/branches/create"
               // className="border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-black text-2xl font-semibold cursor-pointer hover:bg-gray-400 hover:text-red-500 hover:scale-105 hover:shadow-2xl transition duration-300 p-4 rounded-lg"
-              className="border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-gradient-to-r from-slate-200 to-slate-700 text-2xl font-semibold cursor-pointer hover:bg-gradient-to-r hover:from-slate-700 hover:via-green-300 hover:to-slate-200 hover:scale-105 hover:shadow-2xl transition duration-300 p-4 rounded-lg"
+              className="border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-gradient-to-r from-slate-200 to-slate-700 text-2xl font-semibold cursor-pointer hover:bg-gradient-to-r hover:bg-blue-500 hover:text-white hover:scale-105 hover:shadow-2xl transition duration-300 p-4 rounded-lg"
             >
               + Add New Branch
             </Link>
