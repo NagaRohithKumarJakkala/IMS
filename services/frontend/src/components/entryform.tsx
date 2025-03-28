@@ -9,24 +9,42 @@ const EntryForm = () => {
     supplier_id: "",
     branch_id: "",
     user_id: "",
-    items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
+    items: [
+      {
+        product_id: "",
+        product_name: "",
+        quantity_of_item: "",
+        cost_of_item: "",
+      },
+    ],
   });
 
   const createEntry = async (entryData) => {
+    const formattedEntry = {
+      ...entryData,
+      items: entryData.items.map(({ product_name, ...rest }) => rest), // Exclude product_name from API request
+    };
     try {
       const data = await fetchProtectedData("entry", "", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(entryData),
+        body: JSON.stringify(formattedEntry),
       });
       alert("Entry created: " + JSON.stringify(data));
       setEntry({
         supplier_id: "",
         branch_id: "",
         user_id: "",
-        items: [{ product_id: "", quantity_of_item: "", cost_of_item: "" }],
+        items: [
+          {
+            product_id: "",
+            product_name: "",
+            quantity_of_item: "",
+            cost_of_item: "",
+          },
+        ],
       });
     } catch (error) {
       console.error("Error creating entry:", error);
@@ -50,7 +68,12 @@ const EntryForm = () => {
       ...entry,
       items: [
         ...entry.items,
-        { product_id: "", quantity_of_item: "", cost_of_item: "" },
+        {
+          product_id: "",
+          product_name: "",
+          quantity_of_item: "",
+          cost_of_item: "",
+        },
       ],
     });
   };
@@ -61,18 +84,13 @@ const EntryForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formattedEntry = {
-      ...entry,
-      supplier_id: parseInt(entry.supplier_id, 10),
-      user_id: parseInt(entry.user_id, 10),
-      items: entry.items.map((item) => ({
-        ...item,
-        quantity_of_item: parseInt(item.quantity_of_item, 10),
-        cost_of_item: parseFloat(item.cost_of_item),
-      })),
-    };
-    await createEntry(formattedEntry);
+    await createEntry(entry);
   };
+
+  const totalCost = entry.items.reduce(
+    (sum, item) => sum + (item.quantity_of_item * item.cost_of_item || 0),
+    0,
+  );
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-white max-w-full mx-auto">
@@ -115,6 +133,9 @@ const EntryForm = () => {
                   Product ID
                 </th>
                 <th className="border border-gray-300 text-black font-serif px-4 py-2">
+                  Product Name
+                </th>
+                <th className="border border-gray-300 text-black font-serif px-4 py-2">
                   Quantity
                 </th>
                 <th className="border border-gray-300 text-black font-serif px-4 py-2">
@@ -141,6 +162,16 @@ const EntryForm = () => {
                   </td>
                   <td className="border border-gray-300 px-2 py-1">
                     <input
+                      type="text"
+                      name="product_name"
+                      value={item.product_name}
+                      onChange={(e) => handleChange(e, index)}
+                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
+                      disabled
+                    />
+                  </td>
+                  <td className="border border-gray-300 px-2 py-1">
+                    <input
                       type="number"
                       name="quantity_of_item"
                       min="1"
@@ -162,7 +193,7 @@ const EntryForm = () => {
                       required
                     />
                   </td>
-                  <td className=" text-black border border-gray-300 px-2 py-1">
+                  <td className="border border-gray-300 px-2 py-1">
                     {(item.quantity_of_item * item.cost_of_item).toFixed(2)}
                   </td>
                   <td>
@@ -176,6 +207,18 @@ const EntryForm = () => {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td
+                  colSpan="4"
+                  className="text-right font-bold py-2 px-4 border-t"
+                >
+                  Total Cost:
+                </td>
+                <td className="font-bold py-2 px-4 border-t">
+                  {totalCost.toFixed(2)}
+                </td>
+                <td></td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSession } from "next-auth/react";
 import { fetchProtectedData } from "@/utils/api";
 
 export default function SupplierList() {
@@ -27,32 +26,46 @@ export default function SupplierList() {
   }, []);
 
   if (loading)
-    return <p className="text-center text-gray-600 text-lg">Loading...</p>;
-  if (error) return <p className="text-center text-red-500 text-lg">{error}</p>;
+    return <p className="text-center text-gray-800 text-xl">Loading...</p>;
+  if (error) return <p className="text-center text-red-700 text-xl">{error}</p>;
 
   return (
-    <div className="p-6 max-w-2xl mx-auto bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+    <div className="p-4 min-h-screen max-w-full mx-auto bg-white shadow-md rounded-lg">
+      <h2 className="text-2xl font-bold text-left mt-2 mb-4 text-gray-900">
         Supplier List
       </h2>
-      {suppliers.length > 0 ? (
-        <ul className="border border-gray-300 rounded-lg overflow-hidden divide-y divide-gray-300">
-          {suppliers.map((supplier) => (
-            <li
-              key={supplier.supplier_id}
-              className="px-4 py-3 flex justify-between items-center bg-gray-50 hover:bg-gray-100 transition duration-200"
-            >
-              <span className="text-gray-700 font-medium">
-                {supplier.supplier_id} - {supplier.supplier_name}
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-center text-gray-500 text-lg">
-          No suppliers available.
-        </p>
-      )}
+      <div className="overflow-auto">
+        <table className="w-full bg-white border border-gray-300 rounded-lg text-base">
+          <thead>
+            <tr className="bg-gray-300">
+              <th className="py-2 px-4 border-b text-gray-900">Supplier ID</th>
+              <th className="py-2 px-4 border-b text-gray-900">
+                Supplier Name
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {suppliers.length > 0 ? (
+              suppliers.map((supplier) => (
+                <tr key={supplier.supplier_id} className="hover:bg-gray-200">
+                  <td className="py-2 px-4 border-b text-center text-gray-900">
+                    {supplier.supplier_id}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center text-gray-900">
+                    {supplier.supplier_name}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="2" className="py-4 px-4 text-center text-gray-900">
+                  No suppliers available.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -12,6 +12,11 @@ func get(router *gin.Engine) {
 	router.GET("/create-tables", models.CreateTables)
 	router.GET("/create-triggers", models.CreateTriggers)
 	router.GET("/get-branches", models.GetBranches)
+	router.GET("/allproducts", models.GetAllProducts)
+	router.GET("/product", models.GetProductDetails)
+	router.GET("/products-by-name", models.GetProductsByName)
+	router.GET("/product-in-branch", models.GetProductsByNameInBranch)
+	router.GET("/product-all-in-branch", models.GetAllProductsInBranch)
 
 	// Restricted routes with role-based access control
 	adminGroup := router.Group("/")
@@ -23,18 +28,12 @@ func get(router *gin.Engine) {
 	staffGroup.Use(middleware.AuthMiddleware("staff", "admin")) // Staff and admins can access
 	{
 		staffGroup.GET("/product/:product_id", models.GetProduct)
-		staffGroup.GET("/products-by-name", models.GetProductsByName)
 		staffGroup.GET("/get-suppliers", models.GetSuppliers)
 	}
 
 	customerGroup := router.Group("/")
 	customerGroup.Use(middleware.AuthMiddleware("customer", "staff", "admin")) // Customers, Staff, Admins
 	{
-		customerGroup.GET("/allproducts", models.GetAllProducts)
-		customerGroup.GET("/product", models.GetProductDetails)
-
-		customerGroup.GET("/product-in-branch", models.GetProductsByNameInBranch)
-		customerGroup.GET("/product-all-in-branch", models.GetAllProductsInBranch)
 	}
 
 	auditorGroup := router.Group("/")
