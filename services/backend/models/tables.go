@@ -195,9 +195,8 @@ var CreateTriggersQueries = []string{
 		VALUES (NEW.product_id, (SELECT branch_id FROM Order_Table WHERE order_id = NEW.order_id), -NEW.quantity_of_item, 'DECREASE');
 	END;`,
 
-	
 	//announcement to tell that the stock of that respective productid has decreased below threshold(20)
-`CREATE TRIGGER stock_less_than_20 
+	`CREATE TRIGGER stock_less_than_20 
 AFTER INSERT ON Stock_Log 
 FOR EACH ROW
 BEGIN
@@ -245,11 +244,10 @@ BEGIN
             );
         END IF;
     END IF;
-END//`,
+END;`,
 
-
-// announcement to remove when the stock of that respective productid has increased above threshold(20)
-`CREATE TRIGGER stock_greater_than_20 
+	// announcement to remove when the stock of that respective productid has increased above threshold(20)
+	`CREATE TRIGGER stock_greater_than_20 
 AFTER INSERT ON Stock_Log 
 FOR EACH ROW
 BEGIN
@@ -271,9 +269,8 @@ BEGIN
               AND announcement_type = 'STOCK';
         END IF;
     END IF;
-END//
+END
 DELIMITER ;`,
-
 }
 
 var CreateFunctionsQueries = []string{
@@ -363,4 +360,3 @@ var CreateFunctionsQueries = []string{
 	END//
 	DELIMITER ;`,
 }
-

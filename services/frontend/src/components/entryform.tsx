@@ -26,10 +26,12 @@ const EntryForm = () => {
       user_id: parseInt(entryData.user_id, 10),
       items: entryData.items.map(({ product_name, ...rest }) => ({
         product_id: rest.product_id,
-        quantity: parseInt(rest.quantity_of_item, 10),
+        quantity_of_item: parseInt(rest.quantity_of_item, 10),
         cost_of_item: parseFloat(rest.cost_of_item),
       })),
     };
+
+    console.log("Sending entry data:", JSON.stringify(formattedEntry, null, 2));
     try {
       const data = await fetchProtectedData("entry", "", {
         method: "POST",
@@ -215,13 +217,13 @@ const EntryForm = () => {
               ))}
               <tr>
                 <td
-                  colSpan='4'
+                  colSpan="4"
                   className="text-black text-right font-bold py-2 px-4 border-t"
                 >
                   Total Cost:
                 </td>
                 <td className="text-black font-mono font-bold py-2 px-4 border-t">
-                ₹{totalCost.toFixed(2)}
+                  ₹{totalCost.toFixed(2)}
                 </td>
                 <td></td>
               </tr>
