@@ -31,25 +31,72 @@ BEGIN
 END//
 DELIMITER ;
 
+
 -- Calculate total profit for a product
 DELIMITER //
-CREATE FUNCTION get_product_total_profit(p_product_id VARCHAR(16))
+CREATE FUNCTION get_product_current_month_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
 RETURNS DECIMAL(10, 2)
 BEGIN
     DECLARE v_revenue DECIMAL(10, 2);
     DECLARE v_cost DECIMAL(10, 2);
     
-    -- Total revenue from sales
+    -- Total revenue from sales in current month for specific branchs specific product
+    -- oi is for order item(for p_id,sp,quantitiy) table and ot is for order table(branch,date)
     SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
     INTO v_revenue
     FROM Order_Items oi
-    WHERE oi.product_id = p_product_id;
+    JOIN Order_Table ot ON oi.order_id = ot.order_id
+    WHERE oi.product_id = p_product_id
+      AND ot.branch_id = p_branch_id
+      AND MONTH(ot.order_time) = MONTH(CURDATE())
+      AND YEAR(ot.order_time) = YEAR(CURDATE());
     
-    -- Total cost from purchases
+    -- Total cost from purchases in current month for specific branchs specific product
+    -- ei and et is similat to oi and ot
     SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
     INTO v_cost
     FROM Entry_Items ei
-    WHERE ei.product_id = p_product_id;
+    JOIN Entry_Table et ON ei.entry_id = et.entry_id
+    WHERE ei.product_id = p_product_id
+      AND et.branch_id = p_branch_id
+      AND MONTH(et.entry_time) = MONTH(CURDATE())
+      AND YEAR(et.entry_time) = YEAR(CURDATE());
+    
+    RETURN v_revenue - v_cost;
+END//
+DELIMITER ;
+
+--for that particular day a products profit in that branch
+DELIMITER //
+CREATE FUNCTION get_product_today_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
+RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE v_revenue DECIMAL(10, 2);
+    DECLARE v_cost DECIMAL(10, 2);
+    
+    -- Total revenue from sales today for specific branchs specific product
+    -- oi is for order item(for p_id,sp,quantitiy) table and ot is for order table(branch,date)
+    SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
+    INTO v_revenue
+    FROM Order_Items oi
+    JOIN Order_Table ot ON oi.order_id = ot.order_id
+    WHERE oi.product_id = p_product_id
+      AND ot.branch_id = p_branch_id
+      AND DAY(ot.order_time) = DAY(CURDATE())
+      AND MONTH(ot.order_time) = MONTH(CURDATE())
+      AND YEAR(ot.order_time) = YEAR(CURDATE());
+    
+    -- Total cost from purchases today for specific branchs specific product
+    -- ei and et is similat to oi and ot
+    SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
+    INTO v_cost
+    FROM Entry_Items ei
+    JOIN Entry_Table et ON ei.entry_id = et.entry_id    
+    WHERE ei.product_id = p_product_id
+      AND et.branch_id = p_branch_id      
+      AND DAY(et.entry_time) = DAY(CURDATE())
+      AND MONTH(et.entry_time) = MONTH(CURDATE())
+      AND YEAR(et.entry_time) = YEAR(CURDATE());
     
     RETURN v_revenue - v_cost;
 END//

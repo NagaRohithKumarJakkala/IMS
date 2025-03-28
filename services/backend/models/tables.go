@@ -109,9 +109,12 @@ var CreateTablesQueries = []string{
 	`CREATE TABLE IF NOT EXISTS Announcement_Table (
 		announcement_id BIGINT AUTO_INCREMENT PRIMARY KEY,
 		branch_id VARCHAR(16) NOT NULL,
+		product_id VARCHAR(16),
+		announcement_type ENUM('STOCK', 'GENERAL') NOT NULL DEFAULT 'GENERAL',
 		announcement_text VARCHAR(512) NOT NULL,
 		announcement_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-		FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE
+		FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE,
+		FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 	);`,
 }
 
@@ -192,83 +195,172 @@ var CreateTriggersQueries = []string{
 		VALUES (NEW.product_id, (SELECT branch_id FROM Order_Table WHERE order_id = NEW.order_id), -NEW.quantity_of_item, 'DECREASE');
 	END;`,
 
-	// Trigger to announce stock is below threshold
-	`CREATE TRIGGER stock_less_than_20 
-	AFTER INSERT ON Stock_Log 
-	FOR EACH ROW
-	BEGIN
-		DECLARE current_quantity INT;
-		DECLARE product_name VARCHAR(128);
+	
+	//announcement to tell that the stock of that respective productid has decreased below threshold(20)
+`CREATE TRIGGER stock_less_than_20 
+AFTER INSERT ON Stock_Log 
+FOR EACH ROW
+BEGIN
+    DECLARE current_quantity INT;
+    DECLARE product_name VARCHAR(128);
+    DECLARE existing_announcement_id BIGINT;
 
-		IF NEW.change_type = 'DECREASE' THEN
+    IF NEW.change_type = 'DECREASE' THEN
+        -- get current stock quantity
+        SELECT quantity_of_item INTO current_quantity 
+        FROM Stock_Table 
+        WHERE product_id = NEW.product_id 
+        AND branch_id = NEW.branch_id
+        LIMIT 1;
 
-			SELECT quantity_of_item INTO current_quantity FROM Stock_Table 
-			WHERE product_id = NEW.product_id AND branch_id = NEW.branch_id LIMIT 1;
+        IF current_quantity < 20 THEN
+            -- get product name
+            SELECT product_name INTO product_name 
+            FROM Product_Table 
+            WHERE product_id = NEW.product_id 
+            LIMIT 1;
 
-			IF current_quantity < 20 THEN
+            -- if announcement alreadu exists
+            SELECT announcement_id INTO existing_announcement_id
+            FROM Announcement_Table
+            WHERE product_id = NEW.product_id
+              AND branch_id = NEW.branch_id
+              AND announcement_text LIKE CONCAT('Stock of ', product_name, ' (%')
+            LIMIT 1;
 
-				SELECT product_name INTO product_name FROM Product_Table 
-				WHERE product_id = NEW.product_id LIMIT 1;
+            -- delete existing announcement if found
+            IF existing_announcement_id IS NOT NULL THEN
+                DELETE FROM Announcement_Table 
+                WHERE announcement_id = existing_announcement_id;
+            END IF;
 
-				INSERT INTO Announcement_Table (branch_id, announcement_text)
-				VALUES (NEW.branch_id, CONCAT('Stock of ', product_name, ' (', NEW.product_id, ') is critically low(', current_quantity,')'));
+            -- insert new announcement of stock being critically low
+            INSERT INTO Announcement_Table 
+            (branch_id, product_id, announcement_type, announcement_text)
+            VALUES (
+                NEW.branch_id,
+                NEW.product_id,
+                'STOCK',
+                CONCAT('Stock of ', product_name, ' (', NEW.product_id, ') is critically low(', current_quantity,')')
+            );
+        END IF;
+    END IF;
+END//`,
 
-			END IF;
-		END IF;
-	END//`,
+
+// announcement to remove when the stock of that respective productid has increased above threshold(20)
+`CREATE TRIGGER stock_greater_than_20 
+AFTER INSERT ON Stock_Log 
+FOR EACH ROW
+BEGIN
+    DECLARE current_quantity INT;
+
+    IF NEW.change_type = 'INCREASE' THEN
+        -- get current stock quantity after the increase\--ifmore than 20 then we need to remove from announcemnets
+        SELECT quantity_of_item INTO current_quantity 
+        FROM Stock_Table 
+        WHERE product_id = NEW.product_id 
+          AND branch_id = NEW.branch_id
+        LIMIT 1;
+
+        -- Only delete if stock has crossed the threshold
+        IF current_quantity >= 20 THEN
+            DELETE FROM Announcement_Table 
+            WHERE product_id = NEW.product_id
+              AND branch_id = NEW.branch_id
+              AND announcement_type = 'STOCK';
+        END IF;
+    END IF;
+END//
+DELIMITER ;`,
+
 }
 
 var CreateFunctionsQueries = []string{
 	`DELIMITER //
-    CREATE FUNCTION get_order_total_money(p_order_id BIGINT)
-    RETURNS DECIMAL(10, 2)
-    BEGIN
-        DECLARE money_total DECIMAL(10, 2);
-        
-        SELECT COALESCE(SUM(o_items.quantity_of_item * o_items.selling_price), 0)
-        INTO money_total
-        FROM Order_Items o_items
-        WHERE o_items.order_id = p_order_id;
-        
-        RETURN money_total;
-    END//
-    DELIMITER ;`,
+	CREATE FUNCTION get_order_total_money(p_order_id BIGINT)
+	RETURNS DECIMAL(10, 2)
+	BEGIN
+		DECLARE money_total DECIMAL(10, 2);
+		
+		SELECT COALESCE(SUM(o_items.quantity_of_item * o_items.selling_price), 0)
+		INTO money_total
+		FROM Order_Items o_items
+		WHERE o_items.order_id = p_order_id;
+		
+		RETURN money_total;
+	END//
+	DELIMITER ;`,
 
 	`DELIMITER //
-    CREATE FUNCTION get_entry_total_cost(p_entry_id BIGINT)
-    RETURNS DECIMAL(10, 2)
-    BEGIN
-        DECLARE money_total DECIMAL(10, 2);
-        
-        SELECT COALESCE(SUM(e_item.quantity_of_item * e_item.cost_of_item), 0)
-        INTO money_total
-        FROM Entry_Items e_item
-        WHERE e_item.entry_id = p_entry_id;
-        
-        RETURN money_total;
-    END//
-    DELIMITER ;`,
+	CREATE FUNCTION get_entry_total_cost(p_entry_id BIGINT)
+	RETURNS DECIMAL(10, 2)
+	BEGIN
+		DECLARE money_total DECIMAL(10, 2);
+		
+		SELECT COALESCE(SUM(e_item.quantity_of_item * e_item.cost_of_item), 0)
+		INTO money_total
+		FROM Entry_Items e_item
+		WHERE e_item.entry_id = p_entry_id;
+		
+		RETURN money_total;
+	END//
+	DELIMITER ;`,
 
 	`DELIMITER //
-    CREATE FUNCTION get_product_total_profit(p_product_id VARCHAR(16))
-    RETURNS DECIMAL(10, 2)
-    BEGIN
-        DECLARE v_revenue DECIMAL(10, 2);
-        DECLARE v_cost DECIMAL(10, 2);
-        
-        -- Total revenue from sales
-        SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
-        INTO v_revenue
-        FROM Order_Items oi
-        WHERE oi.product_id = p_product_id;
-        
-        -- Total cost from purchases
-        SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
-        INTO v_cost
-        FROM Entry_Items ei
-        WHERE ei.product_id = p_product_id;
-        
-        RETURN v_revenue - v_cost;
-    END//
-    DELIMITER ;`,
+	CREATE FUNCTION get_product_current_month_profit(p_product_id VARCHAR(16), p_branch_id VARCHAR(16))
+	RETURNS DECIMAL(10, 2)
+	BEGIN
+		DECLARE v_revenue DECIMAL(10, 2);
+		DECLARE v_cost DECIMAL(10, 2);
+		
+		SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
+		INTO v_revenue
+		FROM Order_Items oi
+		JOIN Order_Table ot ON oi.order_id = ot.order_id
+		WHERE oi.product_id = p_product_id
+		  AND ot.branch_id = p_branch_id
+		  AND MONTH(ot.order_time) = MONTH(CURDATE())
+		  AND YEAR(ot.order_time) = YEAR(CURDATE());
+		
+		SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
+		INTO v_cost
+		FROM Entry_Items ei
+		JOIN Entry_Table et ON ei.entry_id = et.entry_id
+		WHERE ei.product_id = p_product_id
+		  AND et.branch_id = p_branch_id
+		  AND MONTH(et.entry_time) = MONTH(CURDATE())
+		  AND YEAR(et.entry_time) = YEAR(CURDATE());
+		
+		RETURN v_revenue - v_cost;
+	END//
+	DELIMITER ;`,
+
+	`DELIMITER //
+	CREATE FUNCTION get_product_today_profit(p_product_id VARCHAR(16), p_branch_id VARCHAR(16))
+	RETURNS DECIMAL(10, 2)
+	BEGIN
+		DECLARE v_revenue DECIMAL(10, 2);
+		DECLARE v_cost DECIMAL(10, 2);
+		
+		SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
+		INTO v_revenue
+		FROM Order_Items oi
+		JOIN Order_Table ot ON oi.order_id = ot.order_id
+		WHERE oi.product_id = p_product_id
+		  AND ot.branch_id = p_branch_id
+		  AND DATE(ot.order_time) = CURDATE();
+		
+		SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
+		INTO v_cost
+		FROM Entry_Items ei
+		JOIN Entry_Table et ON ei.entry_id = et.entry_id    
+		WHERE ei.product_id = p_product_id
+		  AND et.branch_id = p_branch_id      
+		  AND DATE(et.entry_time) = CURDATE();
+		
+		RETURN v_revenue - v_cost;
+	END//
+	DELIMITER ;`,
 }
+

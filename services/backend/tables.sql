@@ -109,7 +109,10 @@ CREATE TABLE IF NOT EXISTS Stock_Log (
 CREATE TABLE IF NOT EXISTS Announcement_Table (
     announcement_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     branch_id VARCHAR(16) NOT NULL,
+    product_id VARCHAR(16),
+    announcement_type ENUM('STOCK', 'GENERAL') NOT NULL DEFAULT 'GENERAL',
     announcement_text VARCHAR(512) NOT NULL,
     announcement_time DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE
+    FOREIGN KEY (branch_id) REFERENCES Branch_Table(branch_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES Product_Table(product_id) ON DELETE CASCADE
 );
