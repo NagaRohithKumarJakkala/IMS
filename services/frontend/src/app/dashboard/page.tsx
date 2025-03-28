@@ -77,18 +77,20 @@ export default function Home() {
                   href={`/products/sell?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="New Order"
                 />
-                <NavLink
+                {/*<NavLink
                   href={`/refill-recommendations?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Refill Recommendations"
                 />
+                */}
               </>
             )}
             {(accessLevel === "admin" || accessLevel === "auditor") && (
               <>
-                <NavLink
+                {/*<NavLink
                   href={`/analysis?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Analysis"
                 />
+                */}
                 <NavLink
                   href={`/supplier?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Supplier Details"

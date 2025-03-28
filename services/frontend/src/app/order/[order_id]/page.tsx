@@ -79,7 +79,7 @@ const OrderDetails = () => {
                     {record.quantity}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    ${record.selling_price.toFixed(2)}
+                    ₹{record.selling_price.toFixed(2)}
                   </td>
                 </tr>
               ))
