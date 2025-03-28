@@ -199,7 +199,7 @@ const EntryForm = () => {
                       required
                     />
                   </td>
-                  <td className="border border-gray-300 px-2 py-1">
+                  <td className="text-black font-mono border border-gray-300 px-2 py-1">
                     {(item.quantity_of_item * item.cost_of_item).toFixed(2)}
                   </td>
                   <td>
@@ -215,7 +215,7 @@ const EntryForm = () => {
               ))}
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan='4'
                   className="text-black text-right font-bold py-2 px-4 border-t"
                 >
                   Total Cost:
@@ -231,13 +231,13 @@ const EntryForm = () => {
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800"
+          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800 hover:scale-95 transition duration-200"
         >
           + Add Item
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-95 transition duration-200"
         >
           Submit Entry
         </button>

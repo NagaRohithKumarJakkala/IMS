@@ -13,10 +13,8 @@ const NavBar = () => {
     }
   }
   return (
-    <div
-      id="nav"
-      className="flex justify-between bg-gray-950 border border-gray-900 p-3 sticky z-10"
-    >
+    <div id="nav" className="flex justify-between bg-gray-950 border border-gray-900 p-3 sticky z-10">
+    {/* <div className="bg-gradient-to-br from-violet-600 via-slate-900 to-violet-200 text-white text-center p-6"> */}
       <a href="./" id="logo" className="p-3 mx-4 font-bold text-3xl font-mono">
         IMS
       </a>

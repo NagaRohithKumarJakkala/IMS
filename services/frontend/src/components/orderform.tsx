@@ -211,7 +211,7 @@ const OrderForm = () => {
                       required
                     />
                   </td>
-                  <td className="border px-2 py-1">
+                  <td className="text-black font-mono border px-2 py-1">
                     {(item.quantity_of_item * item.selling_price).toFixed(2)}
                   </td>
                   <td>
@@ -228,11 +228,11 @@ const OrderForm = () => {
               <tr>
                 <td
                   colSpan="4"
-                  className="text-right font-bold py-2 px-4 border-t"
+                  className="text-black text-right font-bold py-2 px-4 border-t"
                 >
                   Total Cost:
                 </td>
-                <td className="font-bold py-2 px-4 border-t">
+                <td className="text-black font-mono font-bold py-2 px-4 border-t">
                   {totalCost.toFixed(2)}
                 </td>
                 <td></td>
@@ -243,13 +243,13 @@ const OrderForm = () => {
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800"
+          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800 hover:scale-95 transition duration-200" 
         >
           + Add Item
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-95 transition duration-200"
         >
           Submit Order
         </button>
