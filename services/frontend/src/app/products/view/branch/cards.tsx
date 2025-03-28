@@ -59,8 +59,8 @@ export default function ProductsPage() {
   return (
     <>
       <TopBar />
-      <div className="min-h-screen bg-gray-200 p-6">
-        <h1 className="from-neutral-100 text-black text-2xl font-bold text-center mb-6">
+      <div className="bg-gradient-to-br from-gray-100 to-green-200 min-h-screen bg-gray-200 p-6">
+        <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
           Products in {branchName}
         </h1>
         <input
@@ -68,7 +68,7 @@ export default function ProductsPage() {
           placeholder="Search by name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="font-sans text-black w-full p-2 mb-4 border rounded"
+          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
         />
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
@@ -79,7 +79,7 @@ export default function ProductsPage() {
             ? products.map((product) => (
                 <div
                   key={product.product_id}
-                  className="bg-white shadow-md rounded-lg p-4"
+                  className="bg-white shadow-lg rounded-lg p-4"
                 >
                   <h2 className="text-slate-500 text-xl font-serif font-semibold">
                     {product.product_name}
@@ -92,11 +92,10 @@ export default function ProductsPage() {
                   </p>
                   <p className="text-gray-500">Category: {product.category}</p>
                   <p className="text-gray-700">Description:{product.description}</p>
-                  <p className="text-gray-700">{product.description}</p>
-                  <p className="text-gray-700"> MRP: ${product.mrp.toFixed(2)}</p>
+                  <p className="text-gray-700"> MRP: ₹{product.mrp.toFixed(2)}</p>
                   <p className="text-gray-700">Quantity: {product.quantity}</p>
                   <p className="text-green-600 font-bold">
-                    Selling Price: ${product.selling_price.toFixed(2)}
+                    Selling Price: ₹{product.selling_price.toFixed(2)}
                   </p>
                 </div>
               ))

@@ -18,9 +18,9 @@ interface Product {
 
 export default function ProductsPage() {
   const searchParams = useSearchParams();
-  const userId = searchParams.get("user_id") || "";
-  const branchId = searchParams.get("branch_id") || "";
-  const branchName = searchParams.get("branch_name") || "";
+  const userId = searchParams?.get("user_id") || "";
+  const branchId = searchParams?.get("branch_id") || "";
+  const branchName = searchParams?.get("branch_name") || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -59,14 +59,15 @@ export default function ProductsPage() {
   return (
     <>
       <TopBar />
-      <div className="min-h-screen bg-gray-100 p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">Products</h1>
+      <div className="bg-gradient-to-br from-gray-100 to-green-200 min-h-screen bg-gray-200 p-6">
+      <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
+          Products</h1>
         <input
           type="text"
           placeholder="Search by name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
+          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
         />
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
@@ -77,9 +78,9 @@ export default function ProductsPage() {
             ? products.map((product) => (
                 <div
                   key={product.product_id}
-                  className="bg-white shadow-md rounded-lg p-4"
+                  className="bg-white shadow-lg rounded-lg p-4"
                 >
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-slate-500 text-xl font-serif font-semibold">
                     {product.product_name}
                   </h2>
                   <p className="text-gray-500">
@@ -89,12 +90,12 @@ export default function ProductsPage() {
                     Brand: {product.product_brand}
                   </p>
                   <p className="text-gray-500">Category: {product.category}</p>
-                  <p className="text-gray-700">{product.description}</p>
+                  <p className="text-gray-700">Description: {product.description}</p>
                   <p className="text-gray-700">
-                    MRP: ${product.mrp.toFixed(2)}
+                    MRP: ₹{product.mrp.toFixed(2)}
                   </p>
                   <p className="text-green-600 font-bold">
-                    Selling Price: ${product.selling_price.toFixed(2)}
+                    Selling Price: ₹{product.selling_price.toFixed(2)}
                   </p>
                 </div>
               ))

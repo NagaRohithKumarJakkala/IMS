@@ -39,7 +39,8 @@ const OrderDetails = () => {
   );
 
   return (
-    <div className="p-5 relative">
+    <div className="p-5 relative min-h-screen bg-gradient-to-br from-black to-violet-500 bg-cover">
+      {/* <div className="flex justify-center min-h-screen min-w-full bg-gradient-to-br from-violet-500 to-black bg-cover"></div> */}
       <button
         onClick={() => router.back()}
         className="mb-4 text-blue-500 underline"
@@ -96,7 +97,7 @@ const OrderDetails = () => {
               <td colSpan={3} className="text-right px-4 py-2 border-t">
                 Total Cost:
               </td>
-              <td className="px-4 py-2 border-t">${totalCost.toFixed(2)}</td>
+              <td className="px-4 py-2 border-t">₹{totalCost.toFixed(2)}</td>
             </tr>
           </tfoot>
         )}

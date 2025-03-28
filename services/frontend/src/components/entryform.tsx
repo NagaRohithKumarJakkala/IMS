@@ -132,7 +132,7 @@ const EntryForm = () => {
           required
         />
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-pink-900">
+          <table className="min-w-full border border-transparent">
             <thead>
               <tr className="bg-slate-200">
                 <th className="border border-gray-300 text-black font-serif px-4 py-2">
@@ -221,7 +221,7 @@ const EntryForm = () => {
                   Total Cost:
                 </td>
                 <td className="text-black font-mono font-bold py-2 px-4 border-t">
-                  {totalCost.toFixed(2)}
+                ₹{totalCost.toFixed(2)}
                 </td>
                 <td></td>
               </tr>
