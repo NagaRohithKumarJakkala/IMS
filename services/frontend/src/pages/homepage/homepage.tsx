@@ -45,12 +45,12 @@ const HomePage = () => {
         </div>
       </div>
       <div className="grid sm:grid-cols-12 border border-l-transparent border-r-transparent m-10 rounded-xl shadow-2xl">
-        <div className="min-h-[200px] border border-white m-5 sm:order-2 sm:col-span-6 lg:col-span-4">
+        <div className="min-h-[180px] m-5 sm:order-2 sm:col-span-6 lg:col-span-4">
           <Image
-            src="/black.png"
+            src="/view.png"
             alt="alternate image"
-            width={50}
-            height={50}
+            width={450}
+            height={450}
           ></Image>
         </div>
         <div className="font-serif font-bold text-white text-2xl italic min-h-[200px] m-5  sm:order-1 sm:col-span-6 lg:col-span-8">
@@ -58,7 +58,7 @@ const HomePage = () => {
         resources, customizing your workflows to achieve peak performance and responsiveness.
         </div>
       </div>
-      <div className="m-10 min-h-[300] border border-white">
+      <div className="m-10 min-h-[300] border border-l-transparent border-r-transparent rounded-xl shadow-2xl">
         <h2 className="m-5 text-center text-3xl font-serif underline">For Clients</h2>
         <div className="text-lg text-left font-thin m-5">
         In the realm of inventory management, providing a uniform, undifferentiated view to all users within an organization 
@@ -75,10 +75,10 @@ const HomePage = () => {
          IMS empowers your team to work more efficiently, make informed decisions, and maintain optimal inventory control.
         </div>
       </div>
-      <div className=" m-10 border border-white grid grid-cols-1 sm:grid-cols-3 lg:mx-96">
+      <div className=" m-10 border border-l-transparent border-r-transparent rounded-xl shadow-2xl grid grid-cols-1 sm:grid-cols-3 lg:mx-96">
         <div className="border border-white m-5">
           <Image
-            src="/black.png"
+            src="/admin.png"
             alt="alt image"
             width={300}
             height={300}
@@ -86,7 +86,7 @@ const HomePage = () => {
         </div>
         <div className="border border-white m-5">
           <Image
-            src="/black.png"
+            src="/staff.png"
             alt="alt image"
             width={300}
             height={300}
@@ -94,13 +94,13 @@ const HomePage = () => {
         </div>
         <div className="border border-white m-5">
           <Image
-            src="/black.png"
+            src="/user.png"
             alt="alt image"
             width={300}
             height={300}
           ></Image>
         </div>
-        <div className="m-10 sm:col-span-3">
+        {/* <div className="m-10 sm:col-span-3">
           <h2 className="text-center text-2xl underline">ShowCase</h2>
           <div>
             Using the order property will create a disconnect between the visual
@@ -110,10 +110,39 @@ const HomePage = () => {
             order, your users will have different experiences depending on how
             they access your content.
           </div>
-        </div>
+        </div> */}
       </div>
-      <div className="footer min-h-[400px] border border-weight m-10 text-center">
-        footer
+      <div className="m-10 min-h-[300] border border-l-transparent border-r-transparent rounded-xl shadow-2xl">
+      <h2 className="m-5 text-center text-3xl font-serif underline">Contributors</h2>
+      <a
+          href="https://github.com/NagaRohithKumarJakkala"
+          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
+        >
+          Naga Rohith Kumar Jakkala
+        </a>
+        <a
+          href="https://github.com/saikaushhikp"
+          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
+        >
+          Sai Kaushik P
+        </a>
+        <a
+          href="https://github.com/Vishal45187"
+          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
+        >
+          Vishal Varukolu
+        </a>
+        <a
+          href="https://github.com/suhas-1012"
+          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
+        >
+          Sairam Suhas Muvvala
+        </a>
+        <div className="text-center text-lg font-sans font-bold m-5">
+        This project is developed by the students of IIT, Hyderabad.
+        Under the guidance of , <a href="https://www.iith.ac.in/cse/shirshendu"
+          className="p-4 underline text-sky-500 hover:shadow-md hover:rounded-md transition duration-200">Dr. Shirshendu Das</a>, Assistant Professor, department of CSE.
+        </div>
       </div>
       </div>
     </div>
