@@ -21,8 +21,14 @@ const EntryForm = () => {
 
   const createEntry = async (entryData) => {
     const formattedEntry = {
-      ...entryData,
-      items: entryData.items.map(({ product_name, ...rest }) => rest), // Exclude product_name from API request
+      supplier_id: parseInt(entryData.supplier_id, 10),
+      branch_id: entryData.branch_id,
+      user_id: parseInt(entryData.user_id, 10),
+      items: entryData.items.map(({ product_name, ...rest }) => ({
+        product_id: rest.product_id,
+        quantity: parseInt(rest.quantity_of_item, 10),
+        cost_of_item: parseFloat(rest.cost_of_item),
+      })),
     };
     try {
       const data = await fetchProtectedData("entry", "", {

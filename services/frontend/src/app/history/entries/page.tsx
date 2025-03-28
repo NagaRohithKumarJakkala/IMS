@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation"; // Use next/navigation in App Router (Next.js 13+)
 import { useEffect, useState } from "react";
-import OrderHistoryForm from "../../../components/orderhistory";
+import EntryHistoryForm from "../../../components/entryhistory";
 
 export default function Home() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <div className="flex justify-center min-h-screen min-w-full bg-gradient-to-br from-violet-500 to-black bg-cover">
-      <OrderHistoryForm branchId={branch_id} />
+      <EntryHistoryForm branchId={branch_id} />
     </div>
   );
 }
