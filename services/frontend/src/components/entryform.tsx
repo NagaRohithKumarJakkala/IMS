@@ -216,11 +216,11 @@ const EntryForm = () => {
               <tr>
                 <td
                   colSpan="4"
-                  className="text-right font-bold py-2 px-4 border-t"
+                  className="text-black text-right font-bold py-2 px-4 border-t"
                 >
                   Total Cost:
                 </td>
-                <td className="font-bold py-2 px-4 border-t">
+                <td className="text-black font-mono font-bold py-2 px-4 border-t">
                   {totalCost.toFixed(2)}
                 </td>
                 <td></td>

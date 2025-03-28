@@ -17,7 +17,7 @@ const NavBar = () => {
       id="nav"
       className="flex justify-between bg-gray-950 border border-gray-900 p-3 sticky z-10"
     >
-      <a href="./" id="logo" className="p-3 mx-4 font-bold text-2xl">
+      <a href="./" id="logo" className="p-3 mx-4 font-bold text-3xl font-mono">
         IMS
       </a>
       <div className="hidden sm:block">
@@ -25,9 +25,9 @@ const NavBar = () => {
           <a href="./" className="p-3">
             Home
           </a>
-          <a href="./templates" className="p-3">
+          {/* <a href="./templates" className="p-3">
             Templates
-          </a>
+          </a> */}
           <a
             href="https://github.com/NagaRohithKumarJakkala/IMS"
             className="p-3"
@@ -37,8 +37,8 @@ const NavBar = () => {
           <a href="./" className="p-3">
             About
           </a>
-          <a href="./login" className="border border-red-500 p-3">
-            SignUP/Login
+          <a href="./login" className="text-sky-500 border border-sky-500 border-double bg-white p-3 rounded-full hover:bg-gradient-to-r hover:from-violet-200 hover:to-violet-600 hover:text-white hover:font-sans hover:border-transparent hover:shadow-xl hover:scale-95 transition duration-200">
+            Login/SignUp
           </a>
         </div>
       </div>
@@ -52,9 +52,9 @@ const NavBar = () => {
         <a href="./" className="block border p-4 border-white ">
           Home
         </a>
-        <a href="./templates" className="block border p-4 border-white ">
+        {/* <a href="./templates" className="block border p-4 border-white ">
           Templates
-        </a>
+        </a> */}
         <a
           href="https://github.com/NagaRohithKumarJakkala/IMS"
           className="block border p-4  border-white "
@@ -65,7 +65,7 @@ const NavBar = () => {
           About
         </a>
         <a href="./login" className="block border p-4 border-white ">
-          SignUP/Login
+          Login/SignUp
         </a>
       </div>
     </div>

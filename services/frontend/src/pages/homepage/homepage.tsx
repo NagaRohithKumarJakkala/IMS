@@ -9,11 +9,11 @@ const HomePage = () => {
   return (
     <div>
       <NavBar />
-      <div className="max-w-full bg-[url('/space.webp')] h-[40vh] flex flex-col justify-center items-center">
+      <div className="max-w-full bg-[url('/space1.webp')] h-[40vh] flex flex-col justify-center items-center">
         <div className="text-9xl italic rounded-full">IMS</div>
-        <div className="sm:text-2xl">A way to manage your inventory</div>
+        <div className="sm:text-3xl font-bold">A way to manage your inventory</div>
       </div>
-      <div>
+      {/* <div>
         {session ? (
           <>
             <p>You are logged in as {session.user.name}</p>
@@ -27,11 +27,12 @@ const HomePage = () => {
         ) : (
           <p>Please log in.</p>
         )}
-      </div>
+      </div> */}
+      <div className="bg-gradient-to-br from-violet-600 via-slate-900 to-violet-200 text-white text-center p-6">
       <div className="grid sm:grid-cols-12 border border-white m-10">
-        <div className="min-h-[200px] border border-white m-5 sm:order-2  sm:col-span-6 lg:col-span-4">
+        <div className="min-h-[200px] border border-l-transparent border-r-transparent m-5 sm:order-2 sm:col-span-6 lg:col-span-4">
           <Image
-            src="/black.png"
+            src="/space.webp"
             alt="alternate image"
             width={50}
             height={50}
@@ -108,6 +109,7 @@ const HomePage = () => {
       </div>
       <div className="footer min-h-[400px] border border-weight m-10 text-center">
         footer
+      </div>
       </div>
     </div>
   );
