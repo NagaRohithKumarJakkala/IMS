@@ -18,6 +18,7 @@ func get(router *gin.Engine) {
 	router.GET("/product-in-branch", models.GetProductsByNameInBranch)
 	router.GET("/product-all-in-branch", models.GetAllProductsInBranch)
 	router.GET("/order", models.GetOrderProducts)
+	router.GET("/entry", models.GetEntryProducts)
 
 	// Restricted routes with role-based access control
 	adminGroup := router.Group("/")
