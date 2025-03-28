@@ -17,8 +17,7 @@ func get(router *gin.Engine) {
 	router.GET("/products-by-name", models.GetProductsByName)
 	router.GET("/product-in-branch", models.GetProductsByNameInBranch)
 	router.GET("/product-all-in-branch", models.GetAllProductsInBranch)
-	router.GET("/order", models.GetOrderProducts)
-	router.GET("/entry", models.GetEntryProducts)
+	router.GET("/announcments", models.GetAnnouncements)
 
 	// Restricted routes with role-based access control
 	adminGroup := router.Group("/")
@@ -31,6 +30,9 @@ func get(router *gin.Engine) {
 	{
 		staffGroup.GET("/product/:product_id", models.GetProduct)
 		staffGroup.GET("/get-suppliers", models.GetSuppliers)
+
+		staffGroup.GET("/order", models.GetOrderProducts)
+		staffGroup.GET("/entry", models.GetEntryProducts)
 	}
 
 	customerGroup := router.Group("/")

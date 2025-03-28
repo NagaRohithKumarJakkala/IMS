@@ -1,9 +1,11 @@
 "use client";
+
 import TopBar from "../../components/topbar";
 import NavLink from "../../components/navlink";
 import { useSearchParams } from "next/navigation";
 import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { fetchProtectedData } from "@/utils/api";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -11,6 +13,9 @@ export default function Home() {
   const branchName = searchParams?.get("branch_name") || "";
   const userId = searchParams?.get("user_id") || "";
   const [accessLevel, setAccessLevel] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -20,6 +25,23 @@ export default function Home() {
       }
     };
     fetchSession();
+  }, []);
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchProtectedData("announcments");
+        setAnnouncements(data);
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+        setError("Failed to load announcements");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnnouncements();
   }, []);
 
   return (
@@ -40,23 +62,23 @@ export default function Home() {
             {(accessLevel === "admin" || accessLevel === "staff") && (
               <>
                 <NavLink
-                  href={`/products/create?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/products/create?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Add Product"
                 />
                 <NavLink
-                  href={`/products/update?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/products/update?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Update Product"
                 />
                 <NavLink
-                  href={`/products/add?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/products/add?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="New Entry"
                 />
                 <NavLink
-                  href={`/products/sell?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/products/sell?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="New Order"
                 />
                 <NavLink
-                  href={`/refill-recommendations?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/refill-recommendations?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Refill Recommendations"
                 />
               </>
@@ -64,16 +86,24 @@ export default function Home() {
             {(accessLevel === "admin" || accessLevel === "auditor") && (
               <>
                 <NavLink
-                  href={`/analysis?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/analysis?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Analysis"
                 />
                 <NavLink
-                  href={`/supplier?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/supplier?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="Supplier Details"
                 />
                 <NavLink
-                  href={`/history?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  href={`/history?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
                   text="History"
+                />
+              </>
+            )}
+            {(accessLevel === "admin" || accessLevel === "auditor") && (
+              <>
+                <NavLink
+                  href={`/add-employees?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
+                  text="add employees"
                 />
               </>
             )}
@@ -87,7 +117,24 @@ export default function Home() {
           {/* Right Side: Announcements */}
           <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 rounded-lg shadow-md select-none min-h-[300px] flex flex-col">
             <h3 className="text-xl font-semibold text-white">Announcements</h3>
-            <div className="border-t border-white mt-2 flex-grow"></div>
+            <div className="border-t border-white mt-2 flex-grow overflow-y-auto max-h-64">
+              {loading ? (
+                <p className="text-white">Loading announcements...</p>
+              ) : error ? (
+                <p className="text-red-400">{error}</p>
+              ) : announcements.length === 0 ? (
+                <p className="text-white">No announcements available</p>
+              ) : (
+                <ul className="text-white list-disc pl-4">
+                  {announcements.map((announcement) => (
+                    <li key={announcement.announcement_id} className="mt-1">
+                      {announcement.announcement_text} (
+                      {announcement.announcement_time})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </div>
