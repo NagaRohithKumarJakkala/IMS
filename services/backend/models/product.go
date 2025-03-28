@@ -143,3 +143,28 @@ func GetProductsByName(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"products": products})
 }
+func UpdateProduct(c *gin.Context) {
+	productID := c.Param("product_id")
+
+	if productID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product ID is required"})
+		return
+	}
+
+	var product Product
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
+		return
+	}
+
+	query := "UPDATE Product_Table SET product_brand=?, product_name=?, description=?, category=?, mrp=?, selling_price=? WHERE product_id=?"
+	_, err := connect.Db.Exec(query, product.ProductBrand, product.ProductName, product.Description, product.Category, product.MRP, product.SellingPrice, productID)
+
+	if err != nil {
+		log.Println("Error updating product:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Product updated successfully"})
+}

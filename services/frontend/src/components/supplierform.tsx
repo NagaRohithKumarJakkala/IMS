@@ -31,7 +31,7 @@ const SupplierForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const formattedData = {
       supplier_id: parseInt(formData.supplier_id, 10),
@@ -42,7 +42,9 @@ const SupplierForm = () => {
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-white max-w-md mx-auto">
-      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">Add New Supplier</h2>
+      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
+        Add New Supplier
+      </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="number"

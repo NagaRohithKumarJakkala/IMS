@@ -1,5 +1,5 @@
 import TopBar from "@/components/topbar";
-import ProductForm from "../../../components/productform";
+import ProductUpdateForm from "../../../components/updateproduct";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
     <>
       <TopBar />
       <div className="flex items-center justify-center min-h-screen min-w-full bg-gradient-to-br from-gray-100 to-gray-300 bg-cover">
-        <ProductForm onSubmit="" />
+        <ProductUpdateForm onSubmit="" />
       </div>
     </>
   );

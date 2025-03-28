@@ -44,6 +44,10 @@ export default function Home() {
                   text="Add Product"
                 />
                 <NavLink
+                  href={`/products/update?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
+                  text="Update Product"
+                />
+                <NavLink
                   href={`/products/add?branch_id=${encodeURIComponent(branchId)}&branch_name=${encodeURIComponent(branchName)}&user_id=${encodeURIComponent(userId)}`}
                   text="New Entry"
                 />
