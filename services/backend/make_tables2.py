@@ -4,18 +4,18 @@ from datetime import datetime, timedelta
 
 from faker import Faker
 
-fake = Faker()
+fake = Faker('en_US')  # or 'en_GB', 'fr_FR'
 random.seed(42)
 Faker.seed(42)
 
 # Configuration
 QUANTITIES = {
-    "users": 10,
-    "suppliers": 10,
-    "products": 200,
-    "branches": 10,
-    "orders": 200,
-    "order_items": 600,
+    "users": 15,
+    "suppliers": 45,
+    "products": 1000,
+    "branches": 15,
+    "orders": 300,
+    "order_items": 1200,
     "entries": 150,
     "entry_items": 750,
     "user_logs": 1000,
@@ -45,22 +45,80 @@ def create_suppliers():
         )
 
 
+# def create_products():
+#     for pid in range(1, QUANTITIES["products"] + 1):
+#         mrp = round(random.uniform(10, 1000), 2)
+#         data_store["products"].append(
+#             {
+#                 "product_id": f"P{pid:05d}",
+#                 "product_brand": fake.company(),
+#                 "product_name": fake.word().title(),
+#                 "description": fake.sentence(),
+#                 "category": random.choice(
+#                     ["Electronics", "Apparel", "Home & Kitchen", "Grocery"]
+#                 ),
+#                 "mrp": mrp,
+#                 "SP": round(mrp * random.uniform(0.7, 0.9), 2),
+#             }
+#         )
+
 def create_products():
-    for pid in range(1, QUANTITIES["products"] + 1):
-        mrp = round(random.uniform(10, 1000), 2)
+    grocery_items = [
+        ("Wheat Flour", "Flours", "Finely ground wheat used for baking and cooking."),
+        ("Rice", "Grains", "A staple grain, rich in carbohydrates."),
+        ("Sugar", "Sweeteners", "Sweet crystalline substance for desserts and beverages."),
+        ("Salt", "Condiments", "Essential seasoning for cooking."),
+        ("Milk", "Dairy", "Fresh dairy product, rich in calcium."),
+        ("Eggs", "Dairy", "Protein-rich farm eggs for various recipes."),
+        ("Butter", "Dairy", "Dairy product used in cooking and baking."),
+        ("Peanut Butter", "Spreads", "Protein-rich spread for bread and snacks."),
+        ("Olive Oil", "Oils", "Healthy oil for cooking and dressing."),
+        ("Tea", "Beverages", "Aromatic beverage made from tea leaves."),
+        ("Coffee", "Beverages", "Brewed drink from roasted coffee beans."),
+        ("Lentils", "Pulses", "Protein-packed legumes for soups and curries."),
+        ("Spices", "Spices", "Assorted spices to enhance flavors."),
+        ("Pasta", "Grains", "Italian staple made from durum wheat."),
+        ("Cereal", "Breakfast Items", "Nutritious breakfast food."),
+        ("Honey", "Sweeteners", "Natural sweetener with health benefits."),
+        ("Oats", "Breakfast Items", "Whole grain, good for heart health."),
+        ("Canned Beans", "Canned Goods", "Ready-to-use beans for cooking."),
+        ("Tomato Sauce", "Sauces", "Rich tomato-based cooking sauce."),
+        ("Corn Flakes", "Breakfast Items", "Crispy corn-based cereal for breakfast."),
+        ("Chia Seeds", "Superfoods", "Nutrient-dense seeds for a healthy diet."),
+        ("Soy Milk", "Dairy Alternatives", "Plant-based milk rich in protein."),
+        ("Yogurt", "Dairy", "Probiotic-rich dairy product."),
+        ("Green Tea", "Beverages", "Antioxidant-rich tea for a healthy lifestyle."),
+        ("Coconut Oil", "Oils", "Versatile oil for cooking and skincare."),
+        ("Whole Wheat Bread", "Bakery", "Healthy whole wheat bread for daily nutrition."),
+        ("Almond Butter", "Spreads", "Nut-based spread, rich in healthy fats."),
+        ("Brown Sugar", "Sweeteners", "Unrefined sugar with a deep caramel flavor."),
+        ("Chili Powder", "Spices", "Ground dried chilies for adding heat to dishes."),
+        ("Mustard Seeds", "Spices", "Essential for making mustard and pickles."),
+    ]
+
+    # Ensure we have at least 1000 products
+    products_needed = QUANTITIES["products"]
+    product_list = []
+    
+    while len(product_list) < products_needed:
+        product_name, category, description = random.choice(grocery_items)
+        unique_name = f"{product_name} {len(product_list) + 1}"  # Ensure uniqueness
+        product_list.append((unique_name, category, description))
+
+    for pid, (product_name, category, description) in enumerate(product_list, start=1):
+        mrp = round(random.uniform(10, 500), 2)  # Adjusted for groceries
         data_store["products"].append(
             {
-                "product_id": f"P{pid:04d}",
+                "product_id": f"P{pid:05d}",
                 "product_brand": fake.company(),
-                "product_name": fake.unique.word().title(),
-                "description": fake.sentence(),
-                "category": random.choice(
-                    ["Electronics", "Apparel", "Home & Kitchen", "Grocery"]
-                ),
+                "product_name": product_name,
+                "description": description,
+                "category": category,
                 "mrp": mrp,
                 "SP": round(mrp * random.uniform(0.7, 0.9), 2),
             }
         )
+
 
 
 def create_branches():

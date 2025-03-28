@@ -1,3 +1,4 @@
+
 "use client";
 import { useSession, signOut } from "next-auth/react";
 import React from "react";
@@ -113,36 +114,25 @@ const HomePage = () => {
         </div> */}
       </div>
       <div className="m-10 min-h-[300] border border-l-transparent border-r-transparent rounded-xl shadow-2xl">
-      <h2 className="m-5 text-center text-3xl font-serif underline">Contributors</h2>
-      <a
-          href="https://github.com/NagaRohithKumarJakkala"
-          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
-        >
-          Naga Rohith Kumar Jakkala
-        </a>
-        <a
-          href="https://github.com/saikaushhikp"
-          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
-        >
-          Sai Kaushik P
-        </a>
-        <a
-          href="https://github.com/Vishal45187"
-          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
-        >
-          Vishal Varukolu
-        </a>
-        <a
-          href="https://github.com/suhas-1012"
-          className="p-4 underline text-sky-500 rounded-full  hover:shadow-xl hover:scale-95 transition duration-200"
-        >
-          Sairam Suhas Muvvala
-        </a>
-        <div className="text-center text-lg font-sans font-bold m-5">
-        This project is developed by the students of IIT, Hyderabad.
-        Under the guidance of , <a href="https://www.iith.ac.in/cse/shirshendu"
-          className="p-4 underline text-sky-500 hover:shadow-md hover:rounded-md transition duration-200">Dr. Shirshendu Das</a>, Assistant Professor, department of CSE.
-        </div>
+      <h2 className="text-3xl font-serif underline mb-4">Contributors</h2>
+          {[
+            { name: "Naga Rohith Kumar Jakkala", url: "https://github.com/NagaRohithKumarJakkala" },
+            { name: "Sai Kaushik P", url: "https://github.com/saikaushhikp" },
+            { name: "Vishal Varukolu", url: "https://github.com/Vishal45187" },
+            { name: "Sairam Suhas Muvvala", url: "https://github.com/suhas-1012" },
+          ].map((contributor, index) => (
+            <a
+              key={index}
+              href={contributor.url}
+              className="p-4 underline text-sky-500 hover:shadow-xl hover:scale-105 transition-transform duration-200 block"
+            >
+              {contributor.name}
+            </a>
+          ))}
+          <div className="text-center text-lg font-sans font-bold mt-4">
+            This project is developed by students of IIT Hyderabad under the guidance of
+            <a href="https://www.iith.ac.in/cse/shirshendu" className="underline text-sky-500 hover:shadow-md hover:rounded-md transition duration-200"> Dr. Shirshendu Das</a>.
+          </div>
       </div>
       </div>
     </div>
