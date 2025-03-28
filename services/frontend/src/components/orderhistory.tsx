@@ -21,7 +21,7 @@ const OrderHistoryForm = ({ branchId }) => {
       try {
         const data = await fetchProtectedData(
           "history/orders",
-          `branch_id=${branchId}`
+          `branch_id=${branchId}`,
         );
         setHistory(data || []);
       } catch (err) {
@@ -50,7 +50,10 @@ const OrderHistoryForm = ({ branchId }) => {
         <thead>
           <tr className="bg-gray-200">
             {columns.map((col, index) => (
-              <th key={index} className="text-indigo-900 border border-gray-300 px-4 py-2 text-left">
+              <th
+                key={index}
+                className="text-indigo-900 border border-gray-300 px-4 py-2 text-left"
+              >
                 {col}
               </th>
             ))}
@@ -62,12 +65,16 @@ const OrderHistoryForm = ({ branchId }) => {
                 <tr key={record.order_id} className="border-b">
                   <td
                     className="border border-gray-300 px-4 py-2 text-white cursor-pointer underline"
-                    onClick={() => router.push(`/orderdetails/${record.order_id}`)}
+                    onClick={() => router.push(`/order/${record.order_id}`)}
                   >
                     {record.order_id}
                   </td>
-                  <td className="border border-gray-300 px-4 py-2">{record.timestamp}</td>
-                  <td className="border border-gray-300 px-4 py-2">{record.user_id}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {record.timestamp}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {record.user_id}
+                  </td>
                 </tr>
               ))
             : !loading && (
@@ -84,12 +91,6 @@ const OrderHistoryForm = ({ branchId }) => {
 };
 
 export default OrderHistoryForm;
-
-
-
-
-
-
 
 // "use client";
 
