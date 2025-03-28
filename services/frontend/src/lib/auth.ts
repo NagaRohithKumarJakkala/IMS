@@ -28,8 +28,6 @@ const authOptions: NextAuthOptions = {
             },
           );
 
-          console.log("Backend Response:", response.data); // ✅ Debugging log
-
           if (response.data.success && response.data.user) {
             return {
               id: response.data.user.id,
@@ -60,7 +58,6 @@ const authOptions: NextAuthOptions = {
         token.level_of_access = user.level_of_access;
         token.accessToken = user.accessToken; // ✅ Store JWT in JWT callback
       }
-      console.log("JWT Token:", token); // ✅ Debugging log
       return token;
     },
     async session({ session, token }) {
@@ -70,7 +67,6 @@ const authOptions: NextAuthOptions = {
         session.user.level_of_access = token.level_of_access;
       }
       session.accessToken = token.accessToken; // ✅ Store JWT in session
-      console.log("Session Data:", session); // ✅ Debugging log
       return session;
     },
   },

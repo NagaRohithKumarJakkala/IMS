@@ -11,12 +11,12 @@ func get(router *gin.Engine) {
 	// Public endpoints (No authentication required)
 	router.GET("/create-tables", models.CreateTables)
 	router.GET("/create-triggers", models.CreateTriggers)
+	router.GET("/get-branches", models.GetBranches)
 
 	// Restricted routes with role-based access control
 	adminGroup := router.Group("/")
 	adminGroup.Use(middleware.AuthMiddleware("admin")) // Only admins can access
 	{
-		adminGroup.GET("/get-branches", models.GetBranches)
 	}
 
 	staffGroup := router.Group("/")

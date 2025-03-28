@@ -8,6 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func CreateFunctions(c *gin.Context) {
+	for _, query := range CreateFunctionsQueries {
+		_, err := connect.Db.Exec(query)
+		if err != nil {
+			log.Println("Error executing function:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create functions"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "All functions created successfully"})
+}
+
 func CreateTables(c *gin.Context) {
 	for _, query := range CreateTablesQueries {
 		_, err := connect.Db.Exec(query)
