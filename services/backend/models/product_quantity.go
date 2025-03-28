@@ -13,7 +13,7 @@ type ProductDetails struct {
 	ProductName  string  `json:"product_name"`
 	ProductBrand string  `json:"product_brand"`
 	Category     string  `json:"category"`
-	description  string  `json:"description"`
+	Description  string  `json:"description"`
 	MRP          float64 `json:"mrp"`
 	SellingPrice float64 `json:"selling_price"`
 	Quantity     int     `json:"quantity"`
@@ -37,7 +37,7 @@ func GetProductDetails(c *gin.Context) {
 
 	err := connect.Db.QueryRow(query, branchID, productID).Scan(
 		&productDetails.ProductID, &productDetails.ProductName, &productDetails.ProductBrand,
-		&productDetails.Category, &productDetails.description, &productDetails.MRP,
+		&productDetails.Category, &productDetails.Description, &productDetails.MRP,
 		&productDetails.SellingPrice, &productDetails.Quantity,
 	)
 
@@ -60,7 +60,7 @@ func GetAllProductsInBranch(c *gin.Context) {
 
 	var products []ProductDetails
 	query := `
-		SELECT p.product_id, p.product_name, p.product_brand, p.category, p.mrp, p.selling_price AS selling_price, s.quantity_of_item 
+		SELECT p.product_id, p.product_name, p.product_brand, p.category, p.description ,p.mrp, p.selling_price AS selling_price, s.quantity_of_item 
 		FROM Product_Table p 
 		JOIN Stock_Table s ON p.product_id = s.product_id 
 		WHERE s.branch_id = ?`
@@ -77,7 +77,7 @@ func GetAllProductsInBranch(c *gin.Context) {
 		var product ProductDetails
 		if err := rows.Scan(
 			&product.ProductID, &product.ProductName, &product.ProductBrand,
-			&product.Category, &product.description,
+			&product.Category, &product.Description,
 			&product.MRP, &product.SellingPrice, &product.Quantity,
 		); err != nil {
 			log.Println("Error scanning product:", err)
@@ -122,7 +122,7 @@ func GetProductsByNameInBranch(c *gin.Context) {
 		var product ProductDetails
 		if err := rows.Scan(
 			&product.ProductID, &product.ProductName, &product.ProductBrand, &product.Category,
-			&product.description, &product.MRP, &product.SellingPrice, &product.Quantity,
+			&product.Description, &product.MRP, &product.SellingPrice, &product.Quantity,
 		); err != nil {
 			log.Println("Error scanning product:", err)
 			continue
