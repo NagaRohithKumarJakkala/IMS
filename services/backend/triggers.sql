@@ -127,4 +127,29 @@ BEGIN
     END IF;
 END//
 
+-- announcement to remove when the stock of that respective productid has increased above threshold(20)
+CREATE TRIGGER stock_greater_than_20 
+AFTER INSERT ON Stock_Log 
+FOR EACH ROW
+BEGIN
+    DECLARE current_quantity INT;
+
+    IF NEW.change_type = 'INCREASE' THEN
+        -- get current stock quantity after the increase\--ifmore than 20 then we need to remove from announcemnets
+        SELECT quantity_of_item INTO current_quantity 
+        FROM Stock_Table 
+        WHERE product_id = NEW.product_id 
+          AND branch_id = NEW.branch_id
+        LIMIT 1;
+
+        -- Only delete if stock has crossed the threshold
+        IF current_quantity >= 20 THEN
+            DELETE FROM Announcement_Table 
+            WHERE product_id = NEW.product_id
+              AND branch_id = NEW.branch_id
+              AND announcement_type = 'STOCK';
+        END IF;
+    END IF;
+END//
+
 DELIMITER ;
