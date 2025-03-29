@@ -19,7 +19,7 @@ BEGIN
 END//
 
 -- trigger to update stock quantity when an entry is made
-CREATE TRIGGER after_entry_insert
+CREATE OR REPLACE TRIGGER after_entry_insert
 AFTER INSERT ON Entry_Items
 FOR EACH ROW
 BEGIN
