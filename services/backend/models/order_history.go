@@ -10,10 +10,11 @@ import (
 )
 
 type BranchSaleHistory struct {
-	OrderID   int    `json:"order_id"`
-	Timestamp string `json:"timestamp"`
-	UserID    int    `json:"user_id"`
-	BranchID  string `json:"branch_id"`
+	OrderID   int     `json:"order_id"`
+	Timestamp string  `json:"timestamp"`
+	UserID    int     `json:"user_id"`
+	BranchID  string  `json:"branch_id"`
+	TotalCost float64 `json:"total_cost"`
 }
 
 func GetBranchSaleHistory(c *gin.Context) {
@@ -25,7 +26,7 @@ func GetBranchSaleHistory(c *gin.Context) {
 	}
 
 	rows, err := connect.Db.Query(`
-		SELECT order_id, order_time, user_id, branch_id
+		SELECT order_id, order_time, user_id, branch_id,get_order_total_money(order_id) as total_cost
  		FROM Order_Table
  		WHERE branch_id = ?
  		ORDER BY order_time DESC
@@ -44,7 +45,9 @@ func GetBranchSaleHistory(c *gin.Context) {
 		var userID sql.NullInt64
 		var branchID sql.NullString
 
-		if err := rows.Scan(&record.OrderID, &orderTime, &userID, &branchID); err != nil {
+		var totalCost sql.NullFloat64
+
+		if err := rows.Scan(&record.OrderID, &orderTime, &userID, &branchID, &totalCost); err != nil {
 			log.Println("Error reading branch sale history record:", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read branch sale history data"})
 			return
@@ -54,6 +57,7 @@ func GetBranchSaleHistory(c *gin.Context) {
 		record.Timestamp = orderTime.String
 		record.UserID = int(userID.Int64)
 		record.BranchID = branchID.String
+		record.TotalCost = totalCost.Float64
 
 		history = append(history, record)
 	}

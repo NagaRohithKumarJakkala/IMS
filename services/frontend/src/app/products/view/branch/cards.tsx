@@ -100,9 +100,7 @@ export default function ProductsPage() {
                   <h2 className="text-slate-500 text-xl font-serif font-semibold">
                     {product.product_name}
                   </h2>
-                  <p className="text-gray-500">
-                    Product ID: {product.product_id}
-                  </p>
+                  <p className="text-gray-500">ID: {product.product_id}</p>
                   <p className="text-gray-500">
                     Brand: {product.product_brand}
                   </p>
@@ -113,9 +111,16 @@ export default function ProductsPage() {
                   <p className="text-gray-700">
                     MRP: ₹{product.mrp.toFixed(2)}
                   </p>
-                  <p className="text-gray-700">Quantity: {product.quantity}</p>
+                  <p
+                    className={
+                      product.quantity ? "text-gray-700" : "text-red-700"
+                    }
+                  >
+                    Quantity:{" "}
+                    {product.quantity ? product.quantity : "out of stock"}
+                  </p>
                   <p className="text-green-600 font-bold">
-                    Selling Price: ₹{product.selling_price.toFixed(2)}
+                    Price: ₹{product.selling_price.toFixed(2)}
                   </p>
                 </div>
               ))

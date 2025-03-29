@@ -5,7 +5,13 @@ import { useRouter, useParams } from "next/navigation";
 import { fetchProtectedData } from "@/utils/api";
 
 const SupplierEntryHistory = ({ supplierId }) => {
-  const columns = ["Entry ID", "Timestamp", "User ID", "Branch ID"];
+  const columns = [
+    "Entry ID",
+    "Timestamp",
+    "User ID",
+    "Branch ID",
+    "Total Cost",
+  ];
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -48,7 +54,7 @@ const SupplierEntryHistory = ({ supplierId }) => {
         <span className="text-amber-400 font-bold">Supplier ID:</span>{" "}
         {supplierId}
       </div> */}
-      
+
       <h2 className="text-yellow-300 text-xl font-bold mb-4">
         Supplier Entry History for Supplier ID: {supplierId}
       </h2>
@@ -82,6 +88,9 @@ const SupplierEntryHistory = ({ supplierId }) => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {record.branch_id}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    ₹{record.total_cost}
                   </td>
                 </tr>
               ))

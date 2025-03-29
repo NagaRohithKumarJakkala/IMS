@@ -10,11 +10,12 @@ import (
 )
 
 type BranchEntryHistory struct {
-	EntryID    int    `json:"entry_id"`
-	Timestamp  string `json:"timestamp"`
-	UserID     int    `json:"user_id"`
-	BranchID   string `json:"branch_id"`
-	SupplierID int    `json:"supplier_id"`
+	EntryID    int     `json:"entry_id"`
+	Timestamp  string  `json:"timestamp"`
+	UserID     int     `json:"user_id"`
+	BranchID   string  `json:"branch_id"`
+	SupplierID int     `json:"supplier_id"`
+	TotalCost  float64 `json:"total_cost"`
 }
 
 func GetBranchEntryHistory(c *gin.Context) {
@@ -26,7 +27,7 @@ func GetBranchEntryHistory(c *gin.Context) {
 	}
 
 	rows, err := connect.Db.Query(`
-		SELECT entry_id, entry_time, user_id, branch_id, supplier_id
+		SELECT entry_id, entry_time, user_id, branch_id, supplier_id ,get_entry_total_cost(entry_id)
 		FROM Entry_Table 
 		WHERE branch_id = ? 
 		ORDER BY entry_time DESC
@@ -45,8 +46,9 @@ func GetBranchEntryHistory(c *gin.Context) {
 		var userID sql.NullInt64
 		var branchID sql.NullString
 		var supplierID sql.NullInt64
+		var totalCost sql.NullFloat64
 
-		if err := rows.Scan(&record.EntryID, &entryTime, &userID, &branchID, &supplierID); err != nil {
+		if err := rows.Scan(&record.EntryID, &entryTime, &userID, &branchID, &supplierID, &totalCost); err != nil {
 			log.Println("Error reading branch entry history record:", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read branch entry history data"})
 			return
@@ -57,6 +59,7 @@ func GetBranchEntryHistory(c *gin.Context) {
 		record.UserID = int(userID.Int64)
 		record.BranchID = branchID.String
 		record.SupplierID = int(supplierID.Int64)
+		record.TotalCost = totalCost.Float64
 
 		history = append(history, record)
 	}

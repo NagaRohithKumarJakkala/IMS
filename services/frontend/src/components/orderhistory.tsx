@@ -6,7 +6,7 @@ import { fetchProtectedData } from "@/utils/api";
 import { useRouter } from "next/navigation";
 
 const OrderHistoryForm = ({ branchId }) => {
-  const columns = ["Order ID", "Timestamp", "User ID"];
+  const columns = ["Order ID", "Timestamp", "User ID", "Total Cost"];
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -39,13 +39,14 @@ const OrderHistoryForm = ({ branchId }) => {
   return (
     <div className="p-5 relative">
       <div className="absolute top-0 right-0 p-1 bg-transparent rounded-md">
-      <button
-        onClick={() => router.back()}
-        className="mb-4 text-blue-500 underline pb-3"
-      >
-        &lArr; Back
-      </button>
-        <span className="text-amber-400 font-bold pl-4">Branch ID:</span> {branchId}
+        <button
+          onClick={() => router.back()}
+          className="mb-4 text-blue-500 underline pb-3"
+        >
+          &lArr; Back
+        </button>
+        <span className="text-amber-400 font-bold pl-4">Branch ID:</span>{" "}
+        {branchId}
       </div>
       <h2 className="text-yellow-300 text-xl font-bold mb-4 pt-4">
         Branch Sales History
@@ -80,6 +81,9 @@ const OrderHistoryForm = ({ branchId }) => {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {record.user_id}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    ₹{record.total_cost}
                   </td>
                 </tr>
               ))

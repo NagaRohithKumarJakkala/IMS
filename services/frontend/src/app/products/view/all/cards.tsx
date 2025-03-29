@@ -67,10 +67,10 @@ export default function ProductsPage() {
           Products
         </h1>
         <div className="flex flex-col md:flex-row gap-4 mb-4">
-         <input
-           type="text"
-           placeholder="Search by name..."
-           value={query}
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
           />
@@ -96,9 +96,7 @@ export default function ProductsPage() {
                   <h2 className="text-slate-500 text-xl font-serif font-semibold">
                     {product.product_name}
                   </h2>
-                  <p className="text-gray-500">
-                    Product ID: {product.product_id}
-                  </p>
+                  <p className="text-gray-500">ID: {product.product_id}</p>
                   <p className="text-gray-500">
                     Brand: {product.product_brand}
                   </p>
@@ -110,7 +108,7 @@ export default function ProductsPage() {
                     MRP: ₹{product.mrp.toFixed(2)}
                   </p>
                   <p className="text-green-600 font-bold">
-                    Selling Price: ₹{product.selling_price.toFixed(2)}
+                    Price: ₹{product.selling_price.toFixed(2)}
                   </p>
                 </div>
               ))
