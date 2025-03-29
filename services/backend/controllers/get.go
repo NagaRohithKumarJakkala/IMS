@@ -10,6 +10,7 @@ import (
 func get(router *gin.Engine) {
 	// Public endpoints (No authentication required)
 	router.GET("/branches", models.GetBranches)
+	router.GET("/month-profit", models.GetCurrentMonthProfit)
 	router.GET("/product/:product_id", models.GetProduct)
 	router.GET("/product-in-branch", models.GetProductDetails)
 	router.GET("/products", models.GetAllProducts)
@@ -61,5 +62,6 @@ func get(router *gin.Engine) {
 		checkGroup.GET("/entry", models.GetEntryProducts)
 		checkGroup.GET("/history/orders", models.GetBranchSaleHistory)
 		checkGroup.GET("/history/entries", models.GetBranchEntryHistory)
+
 	}
 }
