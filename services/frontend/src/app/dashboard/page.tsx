@@ -16,6 +16,7 @@ export default function Home() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profit, setProfit] = useState(0);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -28,6 +29,21 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const fetchProfit = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/month-profit?branch_id=${branchId}`,
+        );
+        const data = await response.json();
+        setProfit(data.current_month_profit);
+        console.log("API Response:", data); // Debugging: Check what data is received
+      } catch (error) {
+        console.error("Error fetching profit:", error);
+      }
+    };
+    fetchProfit();
+  }, []);
+  useEffect(() => {
     const fetchAnnouncements = async () => {
       setLoading(true);
       setError(null);
@@ -36,7 +52,7 @@ export default function Home() {
         setAnnouncements(data);
       } catch (error) {
         console.error("Error fetching announcements:", error);
-        setError("Failed to load announcements");
+        setError("No announcements");
       } finally {
         setLoading(false);
       }
@@ -130,6 +146,7 @@ export default function Home() {
                 <p className="text-white">No announcements available</p>
               ) : (
                 <ul className="text-white list-disc pl-4">
+                  <li className="mt-1">current month profit:{profit}</li>
                   {announcements.map((announcement) => (
                     <li key={announcement.announcement_id} className="mt-1">
                       {announcement.announcement_text} (
