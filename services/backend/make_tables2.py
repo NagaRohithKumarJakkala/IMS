@@ -25,25 +25,31 @@ data_store = {k: [] for k in QUANTITIES.keys()}
 
 
 # Helper functions
-def create_users():
-    for uid in range(1, QUANTITIES["users"] + 1):
-        data_store["users"].append(
-            {
-                "username": fake.unique.user_name(),
-                "user_password": fake.password(length=12),
-                "level_of_access": random.choices(
-                    ["Admin", "Manager", "Staff"], weights=[0.1, 0.3, 0.6]
-                )[0],
-            }
-        )
+# def create_users():
+#     for uid in range(1, QUANTITIES["users"] + 1):
+#         data_store["users"].append(
+#             {
+#                 "username": fake.unique.user_name(),
+#                 "user_password": fake.password(length=12),
+#                 "level_of_access": random.choices(
+#                     ["Admin", "Manager", "Staff"], weights=[0.1, 0.3, 0.6]
+#                 )[0],
+#             }
+#         )
 
+
+indian_supplier_names = [
+    "Aarav", "Bhavya", "Chaitra", "Devika", "Eshan",
+    "Falguni", "Gaurav", "Harita", "Ishaan", "Jhanvi",
+    "Kavya", "Laksha", "Moksha", "Nirvaan", "Ojas",
+    "Prisha", "Rudra", "Saisha", "Tanmay", "Vyom"
+]
 
 def create_suppliers():
-    for sid in range(1, QUANTITIES["suppliers"] + 1):
+    for sid, name in enumerate(indian_supplier_names, start=1):
         data_store["suppliers"].append(
-            {"supplier_id": sid, "supplier_name": fake.unique.company()}
+            {"supplier_id": sid, "supplier_name": name}
         )
-
 
 # def create_products():
 #     for pid in range(1, QUANTITIES["products"] + 1):
@@ -135,9 +141,7 @@ def create_orders():
     for _ in range(QUANTITIES["orders"]):
         order = {
             "branch_id": random.choice(data_store["branches"])["branch_id"],
-            "user_id": random.randint(
-                1, QUANTITIES["users"]
-            ),  # Use a random number for user_id
+            "user_id": 1,  # Use a random number for user_id
             "order_time": fake.date_time_between("-1y", "now"),
         }
         data_store["orders"].append(order)
@@ -165,9 +169,7 @@ def create_entries():
         entry = {
             "supplier_id": random.choice(data_store["suppliers"])["supplier_id"],
             "branch_id": random.choice(data_store["branches"])["branch_id"],
-            "user_id": random.randint(
-                1, QUANTITIES["users"]
-            ),  # Use a random number for user_id
+            "user_id": 1,  # Use a random number for user_id
             "entry_time": fake.date_time_between("-6m", "now"),
         }
         data_store["entries"].append(entry)
@@ -190,34 +192,35 @@ def create_entry_items():
             )
 
 
-def create_user_logs():
-    for _ in range(QUANTITIES["user_logs"]):
-        user = random.choice(data_store["users"])
-        login = fake.date_time_between("-1y", "now")
-        data_store["user_logs"].append(
-            {
-                "user_id": random.randint(1, QUANTITIES["users"]),
-                "login_time": login,
-                "logout_time": login
-                + timedelta(hours=random.randint(1, 8), minutes=random.randint(0, 59)),
-            }
-        )
+# def create_user_logs():
+#     for _ in range(QUANTITIES["user_logs"]):
+#         user = 1
+#         login = fake.date_time_between("-1y", "now")
+#         data_store["user_logs"].append(
+#             {
+#                 "user_id": 1,
+#                 "login_time": login,
+#                 "logout_time": login
+#                 + timedelta(hours=random.randint(1, 8), minutes=random.randint(0, 59)),
+#             }
+#         )
 
 
 # Generate all data
-create_users()
-create_suppliers()
+# create_users()
 create_products()
 create_branches()
-create_orders()
-create_order_items()
+create_suppliers()
+
 create_entries()
 create_entry_items()
-create_user_logs()
+create_orders()
+create_order_items()
+
 
 # Export to CSV
 tables_mapping = {
-    "User_Table": ("users", ["username", "user_password", "level_of_access"]),
+    # "User_Table": ("users", ["username", "user_password", "level_of_access"]),
     "Supplier_Table": ("suppliers", ["supplier_id", "supplier_name"]),
     "Product_Table": (
         "products",
@@ -242,7 +245,6 @@ tables_mapping = {
         "entry_items",
         ["entry_id", "product_id", "quantity_of_item", "cost_of_item"],
     ),
-    "User_Log": ("user_logs", ["user_id", "login_time", "logout_time"]),
 }
 
 for table_name, (data_key, fields) in tables_mapping.items():
