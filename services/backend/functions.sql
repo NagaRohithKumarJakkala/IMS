@@ -1,7 +1,7 @@
 -------------------------------------------------------------------------------------
 -- calculate total money from an order
 DELIMITER //
-CREATE FUNCTION get_order_total_money(p_order_id BIGINT)
+CREATE OR REPLACE FUNCTION get_order_total_money(p_order_id BIGINT)
 RETURNS DECIMAL(10, 2)
 BEGIN
     DECLARE money_total DECIMAL(10, 2);
@@ -17,7 +17,7 @@ DELIMITER ;
 
 -- calculate total buying cost for an entry
 DELIMITER //
-CREATE FUNCTION get_entry_total_cost(p_entry_id BIGINT)
+CREATE OR REPLACE FUNCTION get_entry_total_cost(p_entry_id BIGINT)
 RETURNS DECIMAL(10, 2)
 BEGIN
     DECLARE money_total DECIMAL(10, 2);
@@ -34,7 +34,7 @@ DELIMITER ;
 
 -- Calculate total profit for a product
 DELIMITER //
-CREATE FUNCTION get_product_current_month_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
+CREATE OR REPLACE FUNCTION get_product_current_month_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
 RETURNS DECIMAL(10, 2)
 BEGIN
     DECLARE v_revenue DECIMAL(10, 2);
@@ -66,9 +66,70 @@ BEGIN
 END//
 DELIMITER ;
 
+DELIMITER //
+CREATE OR REPLACE FUNCTION get_branch_current_month_profit(p_branch_id VARCHAR(16))
+RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE v_revenue DECIMAL(10, 2) DEFAULT 0;
+    DECLARE v_cost DECIMAL(10, 2) DEFAULT 0;
+    
+    -- Calculate current month's revenue for the branch
+    SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
+    INTO v_revenue
+    FROM Order_Items oi
+    JOIN Order_Table ot ON oi.order_id = ot.order_id
+    WHERE ot.branch_id = p_branch_id
+      AND MONTH(ot.order_time) = MONTH(CURDATE())
+      AND YEAR(ot.order_time) = YEAR(CURDATE());
+    
+    -- Calculate current month's procurement costs for the branch
+    SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
+    INTO v_cost
+    FROM Entry_Items ei
+    JOIN Entry_Table et ON ei.entry_id = et.entry_id
+    WHERE et.branch_id = p_branch_id
+      AND MONTH(et.entry_time) = MONTH(CURDATE())
+      AND YEAR(et.entry_time) = YEAR(CURDATE());
+    
+    RETURN v_revenue - v_cost;
+END//
+DELIMITER ;
+
+
+
+-- function to find a branches monthly profit
+DELIMITER //
+CREATE OR REPLACE FUNCTION get_branch_monthly_profit(p_branch_id VARCHAR(16),p_month INT,p_year INT) 
+RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE v_revenue DECIMAL(10, 2) DEFAULT 0;
+    DECLARE v_cost DECIMAL(10, 2) DEFAULT 0;
+    
+    -- calculate total revenue for the branch in specified month/year
+    SELECT COALESCE(SUM(oi.quantity_of_item * oi.selling_price), 0)
+    INTO v_revenue
+    FROM Order_Items oi
+    JOIN Order_Table ot ON oi.order_id = ot.order_id
+    WHERE ot.branch_id = p_branch_id
+      AND MONTH(ot.order_time) = p_month
+      AND YEAR(ot.order_time) = p_year;
+    
+    -- calculate total procurement cost for the branch in specified month/year
+    SELECT COALESCE(SUM(ei.quantity_of_item * ei.cost_of_item), 0)
+    INTO v_cost
+    FROM Entry_Items ei
+    JOIN Entry_Table et ON ei.entry_id = et.entry_id
+    WHERE et.branch_id = p_branch_id
+      AND MONTH(et.entry_time) = p_month
+      AND YEAR(et.entry_time) = p_year;
+    
+    RETURN v_revenue - v_cost;
+END//
+DELIMITER ;
+
 --for that particular day a products profit in that branch
 DELIMITER //
-CREATE FUNCTION get_product_today_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
+CREATE OR REPLACE FUNCTION get_product_today_profit(p_product_id VARCHAR(16),p_branch_id VARCHAR(16))
 RETURNS DECIMAL(10, 2)
 BEGIN
     DECLARE v_revenue DECIMAL(10, 2);
