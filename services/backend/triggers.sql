@@ -186,7 +186,7 @@ BEGIN
             FROM Announcement_Table
             WHERE product_id = NEW.product_id
               AND branch_id = NEW.branch_id
-              AND announcement_type = 'STOCK'
+              AND announcement_type = 'OVERSTOCK'
             LIMIT 1;
 
             -- Update existing announcement if needed
@@ -201,7 +201,7 @@ BEGIN
             VALUES (
                 NEW.branch_id,
                 NEW.product_id,
-                'STOCK',
+                'OVERSTOCK',
                 CONCAT('Overstock alert: ', product_name, 
                       ' (', NEW.product_id, ') has ', 
                       current_quantity, ' units in stock')
@@ -230,7 +230,7 @@ BEGIN
             DELETE FROM Announcement_Table 
             WHERE product_id = NEW.product_id
               AND branch_id = NEW.branch_id
-              AND announcement_type = 'STOCK';
+              AND announcement_type = 'OVERSTOCK';
         END IF;
     END IF;
 END//
