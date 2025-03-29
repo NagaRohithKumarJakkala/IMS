@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { fetchProtectedData } from "@/utils/api";
-
+import Link from "next/link";
 const SupplierEntryHistory = ({ supplierId }) => {
   const columns = [
     "Entry ID",
@@ -78,7 +78,10 @@ const SupplierEntryHistory = ({ supplierId }) => {
             ? history.map((record) => (
                 <tr key={record.entry_id} className="border-b">
                   <td className="border border-gray-300 px-4 py-2">
+                    <Link
+                      href={`/entry/${record.entry_id}`}>
                     {record.entry_id}
+                    </Link>
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {record.timestamp}
