@@ -1,7 +1,7 @@
 
 -- trigger to add stock entries when a new branch is created
 DELIMITER //
-CREATE TRIGGER after_branch_insert
+CREATE OR REPLACE TRIGGER after_branch_insert
 AFTER INSERT ON Branch_Table
 FOR EACH ROW
 BEGIN
@@ -10,7 +10,7 @@ BEGIN
 END//
 
 -- trigger to add stock entries when a new product is created
-CREATE TRIGGER after_product_insert
+CREATE OR REPLACE TRIGGER after_product_insert
 AFTER INSERT ON Product_Table
 FOR EACH ROW
 BEGIN
@@ -30,7 +30,7 @@ BEGIN
 END//
 
 -- trigger to reduce stock when an order is placed
-CREATE TRIGGER after_order_insert
+CREATE OR REPLACE TRIGGER after_order_insert
 AFTER INSERT ON Order_Items
 FOR EACH ROW
 BEGIN
@@ -41,7 +41,7 @@ BEGIN
 END//
 
 -- prevent orders when stock is insufficient
-CREATE TRIGGER before_order_insert
+CREATE OR REPLACE TRIGGER before_order_insert
 BEFORE INSERT ON Order_Items
 FOR EACH ROW
 BEGIN
@@ -59,7 +59,7 @@ BEGIN
 END//
 
 -- log stock increase after entry
-CREATE TRIGGER after_stock_increase
+CREATE OR REPLACE TRIGGER after_stock_increase
 AFTER INSERT ON Entry_Items
 FOR EACH ROW
 BEGIN
@@ -68,7 +68,7 @@ BEGIN
 END//
 
 -- log stock decrease after order
-CREATE TRIGGER after_stock_decrease
+CREATE OR REPLACE TRIGGER after_stock_decrease
 AFTER INSERT ON Order_Items
 FOR EACH ROW
 BEGIN
@@ -78,29 +78,31 @@ END//
 
 
 
-CREATE TRIGGER stock_less_than_20 
+CREATE OR REPLACE TRIGGER stock_less_than_20 
 AFTER INSERT ON Stock_Log 
 FOR EACH ROW
 BEGIN
-    DECLARE current_quantity INT;
+    DECLARE current_quantity INT DEFAULT 0;
     DECLARE product_name VARCHAR(128);
     DECLARE existing_announcement_id BIGINT DEFAULT NULL;
 
     IF NEW.change_type = 'DECREASE' THEN
-        -- Get current stock quantity
-        SELECT COALESCE(quantity_of_item, 0) INTO current_quantity 
-        FROM Stock_Table 
-        WHERE product_id = NEW.product_id 
-          AND branch_id = NEW.branch_id
+        -- Get product name and current stock in single query
+        SELECT 
+            COALESCE(p.product_name, 'Unknown Product'),
+            COALESCE(s.quantity_of_item, 0)
+        INTO 
+            product_name,
+            current_quantity
+        FROM Product_Table p
+        LEFT JOIN Stock_Table s
+            ON s.product_id = NEW.product_id
+            AND s.branch_id = NEW.branch_id
+        WHERE p.product_id = NEW.product_id
         LIMIT 1;
 
-        IF current_quantity < 20 THEN
-            -- Ensure product_name is fetched correctly
-            SELECT COALESCE(product_name, 'Unknown Product') INTO product_name 
-            FROM Product_Table 
-            WHERE BINARY product_id = NEW.product_id
-            LIMIT 1;
 
+        IF current_quantity < 20 THEN
             -- Check for existing announcement
             SELECT announcement_id INTO existing_announcement_id
             FROM Announcement_Table
@@ -109,26 +111,29 @@ BEGIN
               AND announcement_type = 'STOCK'
             LIMIT 1;
 
-            -- Delete existing announcement if found
+            -- Remove existing announcement if exists
             IF existing_announcement_id IS NOT NULL THEN
-                DELETE FROM Announcement_Table WHERE announcement_id = existing_announcement_id;
+                DELETE FROM Announcement_Table 
+                WHERE announcement_id = existing_announcement_id;
             END IF;
 
-            -- Insert new announcement
+            -- Create new announcement with accurate quantity
             INSERT INTO Announcement_Table 
             (branch_id, product_id, announcement_type, announcement_text)
             VALUES (
                 NEW.branch_id,
                 NEW.product_id,
                 'STOCK',
-                CONCAT('Stock of ', product_name, ' (', NEW.product_id, ') is critically low (', current_quantity, ')')
+                CONCAT('Stock of ', product_name, 
+                      ' (ID: ', NEW.product_id, 
+                      ') is low: ', current_quantity, ' units remaining')
             );
         END IF;
     END IF;
 END//
 
 -- announcement to remove when the stock of that respective productid has increased above threshold(20)
-CREATE TRIGGER stock_greater_than_20 
+CREATE OR REPLACE TRIGGER stock_greater_than_20 
 AFTER INSERT ON Stock_Log 
 FOR EACH ROW
 BEGIN
@@ -144,6 +149,84 @@ BEGIN
 
         -- Only delete if stock has crossed the threshold
         IF current_quantity >= 20 THEN
+            DELETE FROM Announcement_Table 
+            WHERE product_id = NEW.product_id
+              AND branch_id = NEW.branch_id
+              AND announcement_type = 'STOCK';
+        END IF;
+    END IF;
+END//
+
+CREATE OR REPLACE TRIGGER stock_over_120
+AFTER INSERT ON Stock_Log 
+FOR EACH ROW
+BEGIN
+    DECLARE current_quantity INT DEFAULT 0;
+    DECLARE product_name VARCHAR(128);
+    DECLARE existing_announcement_id BIGINT DEFAULT NULL;
+
+    IF NEW.change_type = 'INCREASE' THEN
+        -- Get product details and current stock
+        SELECT 
+            COALESCE(p.product_name, 'Unknown Product'),
+            COALESCE(s.quantity_of_item, 0)
+        INTO 
+            product_name,
+            current_quantity
+        FROM Product_Table p
+        LEFT JOIN Stock_Table s
+            ON s.product_id = NEW.product_id
+            AND s.branch_id = NEW.branch_id
+        WHERE p.product_id = NEW.product_id
+        LIMIT 1;
+
+        IF current_quantity >= 120 THEN
+            -- Check for existing overstock announcement
+            SELECT announcement_id INTO existing_announcement_id
+            FROM Announcement_Table
+            WHERE product_id = NEW.product_id
+              AND branch_id = NEW.branch_id
+              AND announcement_type = 'STOCK'
+            LIMIT 1;
+
+            -- Update existing announcement if needed
+            IF existing_announcement_id IS NOT NULL THEN
+                DELETE FROM Announcement_Table 
+                WHERE announcement_id = existing_announcement_id;
+            END IF;
+
+            -- Create new overstock announcement
+            INSERT INTO Announcement_Table 
+            (branch_id, product_id, announcement_type, announcement_text)
+            VALUES (
+                NEW.branch_id,
+                NEW.product_id,
+                'STOCK',
+                CONCAT('Overstock alert: ', product_name, 
+                      ' (', NEW.product_id, ') has ', 
+                      current_quantity, ' units in stock')
+            );
+        END IF;
+    END IF;
+END//
+
+-- 2. Trigger for removing overstock announcements
+CREATE OR REPLACE TRIGGER stock_below_120 
+AFTER INSERT ON Stock_Log 
+FOR EACH ROW
+BEGIN
+    DECLARE current_quantity INT DEFAULT 0;
+
+    IF NEW.change_type = 'DECREASE' THEN
+        -- Get current stock quantity
+        SELECT COALESCE(quantity_of_item, 0) INTO current_quantity 
+        FROM Stock_Table 
+        WHERE product_id = NEW.product_id 
+          AND branch_id = NEW.branch_id
+        LIMIT 1;
+
+        IF current_quantity < 120 THEN
+            -- Remove overstock announcement if exists
             DELETE FROM Announcement_Table 
             WHERE product_id = NEW.product_id
               AND branch_id = NEW.branch_id
