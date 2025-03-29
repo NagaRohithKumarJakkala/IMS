@@ -155,6 +155,9 @@ const EntryForm = () => {
         Add Entry
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+      <label htmlFor="supplier_id" className="text-gray-900 font-bold mb-1">
+          Supplier ID
+        </label>
         <input
           type="text"
           name="supplier_id"
@@ -162,24 +165,44 @@ const EntryForm = () => {
           value={entry.supplier_id}
           onChange={handleChange}
           required
-          className="border w-full px-3 py-2 rounded-md shadow-md text-gray-900"
+          className="border w-full px-3 py-2 rounded-md shadow-md text-gray-900 mb-3"
         />
-        <input
-          type="text"
-          name="branch_id"
-          placeholder="Branch ID"
-          value={entry.branch_id}
-          disabled
-          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
-        />
-        <input
-          type="text"
-          name="user_id"
-          placeholder="User ID"
-          value={entry.user_id}
-          disabled
-          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
-        />
+
+
+        <div className="flex justify-between items-center gap-4 mb-4">
+          <div className="flex-row items-center gap-4 w-1/2">
+            <label htmlFor="branch_id" className="text-gray-900 font-bold">
+              Branch ID:
+            </label>
+            <div>
+              <input
+                type="text"
+                name="branch_id"
+                placeholder="Branch ID"
+               value={entry.branch_id}
+               disabled
+               className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700 mb-3"
+              />
+            </div>
+          </div>
+  
+          <div className="flex-row items-center gap-4 w-1/2">
+            <label htmlFor="user_id" className="text-gray-900 font-bold">
+              User ID:
+            </label>
+            <div>
+              <input
+                type="text"
+                name="user_id"
+                placeholder="User ID"
+                value={entry.user_id}
+                disabled
+                className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700 mb-3"
+              />
+            </div>
+          </div>
+        </div>
+
 
         <table className="w-full border">
           <thead>
@@ -247,19 +270,19 @@ const EntryForm = () => {
           </tbody>
         </table>
         <p className="text-lg font-bold text-gray-900">
-          Total Cost: ${totalCost.toFixed(2)}
+          Total Cost: ₹{totalCost.toFixed(2)}
         </p>
 
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700"
+          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800 hover:scale-95 transition duration-200"
         >
           + Add Item
         </button>
         <button
           type="submit"
-          className="w-full bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700"
+          className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-95 transition duration-200"
         >
           Submit Entry
         </button>

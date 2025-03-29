@@ -39,9 +39,15 @@ const OrderHistoryForm = ({ branchId }) => {
   return (
     <div className="p-5 relative">
       <div className="absolute top-0 right-0 p-1 bg-transparent rounded-md">
-        <span className="text-amber-400 font-bold">Branch ID:</span> {branchId}
+      <button
+        onClick={() => router.back()}
+        className="mb-4 text-blue-500 underline pb-3"
+      >
+        &lArr; Back
+      </button>
+        <span className="text-amber-400 font-bold pl-4">Branch ID:</span> {branchId}
       </div>
-      <h2 className="text-yellow-300 text-xl font-bold mb-4">
+      <h2 className="text-yellow-300 text-xl font-bold mb-4 pt-4">
         Branch Sales History
       </h2>
       {loading && <p className="text-center text-gray-600">Loading...</p>}

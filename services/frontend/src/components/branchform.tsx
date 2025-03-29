@@ -43,6 +43,9 @@ const BranchForm = () => {
           Add Branch Details
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+        <label htmlFor="branch_id" className="text-gray-900 font-bold mb-1">
+          Branch ID
+        </label>
           <input
             type="text"
             name="branch_id"
@@ -52,6 +55,9 @@ const BranchForm = () => {
             className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
             required
           />
+          <label htmlFor="branch_name" className="text-gray-900 font-bold mb-1">
+          Branch Name
+        </label>
           <input
             type="text"
             name="branch_name"

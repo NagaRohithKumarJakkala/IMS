@@ -39,12 +39,12 @@ const EntryDetails = () => {
   );
 
   return (
-    <div className="p-5 relative">
+    <div className="p-5 relative min-h-screen bg-gradient-to-br from-black to-violet-500 bg-cover">
       <button
         onClick={() => router.back()}
         className="mb-4 text-blue-500 underline"
       >
-        &larr; Back to Entry History
+        &lArr; Back to Entry History
       </button>
       <h2 className="text-yellow-300 text-xl font-bold mb-4">
         Entry Details for Entry ID: {entry_id}
@@ -96,7 +96,7 @@ const EntryDetails = () => {
               <td colSpan={3} className="text-right px-4 py-2 border-t">
                 Total Cost:
               </td>
-              <td className="px-4 py-2 border-t">${totalCost.toFixed(2)}</td>
+              <td className="px-4 py-2 border-t">₹{totalCost.toFixed(2)}</td>
             </tr>
           </tfoot>
         )}

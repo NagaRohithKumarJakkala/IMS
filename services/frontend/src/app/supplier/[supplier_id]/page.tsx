@@ -5,10 +5,10 @@ import { useParams } from "next/navigation";
 
 const SupplierHistory = () => {
   const params = useParams();
-  const supplierId = params.supplier_id;
+  const supplierId = params?.supplier_id;
   return (
     <>
-      <TopBar />
+      {/* <TopBar /> */}
       <SupplierEntryHistory supplierId={supplierId} />
     </>
   );

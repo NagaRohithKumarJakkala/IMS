@@ -96,46 +96,64 @@ const ProductUpdateForm = () => {
         Update Product
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+      <label htmlFor="product_id" className="text-gray-900 font-bold mb-1">
+          Product ID
+        </label>
         <input
           type="text"
           name="product_id"
           placeholder="Product ID"
           value={formData.product_id}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
+        <label htmlFor="product_brand" className="text-gray-900 font-bold mb-1">
+          Product Brand
+        </label>
         <input
           type="text"
           name="product_brand"
           placeholder="Product Brand"
           value={formData.product_brand}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         />
+        <label htmlFor="product_name" className="text-gray-900 font-bold mb-1">
+          Product Name
+        </label>
         <input
           type="text"
           name="product_name"
           placeholder="Product Name"
           value={formData.product_name}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         />
+        <label htmlFor="category" className="text-gray-900 font-bold mb-1">
+          Category
+        </label>
         <input
           type="text"
           name="category"
           placeholder="Category"
           value={formData.category}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         />
+        <label htmlFor="description" className="text-gray-900 font-bold mb-1">
+          Description
+        </label>
         <textarea
           name="description"
           placeholder="Description"
           value={formData.description}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         ></textarea>
+        <label htmlFor="mrp" className="text-gray-900 font-bold mb-1">
+          MRP
+        </label>
         <input
           type="number"
           step="0.01"
@@ -143,8 +161,11 @@ const ProductUpdateForm = () => {
           placeholder="MRP"
           value={formData.mrp}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         />
+        <label htmlFor="selling_price" className="text-gray-900 font-bold mb-1">
+          Selling Price
+        </label>
         <input
           type="number"
           step="0.01"
@@ -152,7 +173,7 @@ const ProductUpdateForm = () => {
           placeholder="Selling Price (SP)"
           value={formData.selling_price}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
         />
         <button
           type="submit"

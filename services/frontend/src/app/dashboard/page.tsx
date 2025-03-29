@@ -107,7 +107,7 @@ export default function Home() {
               <>
                 <NavLink
                   href={`/add-employees?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
-                  text="add employees"
+                  text="Add Employees"
                 />
               </>
             )}

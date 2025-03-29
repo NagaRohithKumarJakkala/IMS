@@ -74,7 +74,11 @@ export default function Home() {
             {accessLevel === "admin" && (
               <Link
                 href="/branches/create"
-                className="border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-gradient-to-r from-slate-200 to-slate-700 text-2xl font-semibold cursor-pointer hover:bg-gradient-to-r hover:bg-blue-500 hover:text-white hover:scale-105 hover:shadow-2xl transition duration-300 p-4 rounded-lg"
+                // className="border border-stone-600 shadow-xl select-none m-5 text-center flex justify-center items-center text-white bg-gradient-to-r from-slate-200 to-slate-700 text-2xl font-semibold cursor-pointer hover:bg-gradient-to-r hover:bg-blue-500 hover:text-white hover:scale-105 hover:shadow-2xl transition duration-300 p-4 rounded-lg"
+                className="tracking-wider border border-blue-300 shadow-xl select-none m-5 text-center flex justify-center items-center 
+                 text-black bg-white text-2xl font-medium p-4 rounded-lg transition ease-in-out duration-300 cursor-pointer  
+                 hover:border-4 hover:border-blue-500 hover:bg-blue-300 hover:bg-opacity-50  
+                 hover:text-black hover:font-bold hover:scale-105 hover:shadow-2xl"
               >
                 + Add New Branch
               </Link>

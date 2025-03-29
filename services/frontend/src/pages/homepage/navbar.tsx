@@ -14,7 +14,7 @@ const NavBar = () => {
         <a href="./" className="hover:text-violet-400 transition duration-300">Home</a>
         <a href="https://github.com/NagaRohithKumarJakkala/IMS" className="hover:text-violet-400 transition duration-300">GitHub</a>
         <a href="./" className="hover:text-violet-400 transition duration-300">About</a>
-        <a href="./login" className="text-white bg-violet-500 px-4 py-2 rounded-full hover:bg-violet-700 transition duration-300 shadow-md">
+        <a href="./login" className="text-white bg-violet-500 px-4 py-2 rounded-full hover:bg-violet-700  hover:scale-95 transition duration-300 shadow-md">
           Login/Sign Up
         </a>
       </div>
@@ -23,7 +23,7 @@ const NavBar = () => {
         <a href="./" className="block p-2 hover:text-violet-400">Home</a>
         <a href="https://github.com/NagaRohithKumarJakkala/IMS" className="block p-2 hover:text-violet-400">GitHub</a>
         <a href="./" className="block p-2 hover:text-violet-400">About</a>
-        <a href="./login" className="block p-2 bg-violet-500 rounded text-center hover:bg-violet-700">Login/Sign Up</a>
+        <a href="./login" className="block p-2 bg-violet-500 rounded text-center hover:bg-violet-700 ">Login/Sign Up</a>
       </div>
     </div>
   );

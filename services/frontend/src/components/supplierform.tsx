@@ -46,22 +46,28 @@ const SupplierForm = () => {
         Add New Supplier
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+      <label htmlFor="supplier_id" className="text-gray-900 font-bold mb-1">
+          Supplier ID
+        </label>
         <input
           type="number"
           name="supplier_id"
           placeholder="Supplier ID"
           value={formData.supplier_id}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
+        <label htmlFor="supplier_name" className="text-gray-900 font-bold mb-1">
+          Supplier Name
+        </label>
         <input
           type="text"
           name="supplier_name"
           placeholder="Supplier Name"
           value={formData.supplier_name}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
         <button

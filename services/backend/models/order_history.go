@@ -29,7 +29,6 @@ func GetBranchSaleHistory(c *gin.Context) {
  		FROM Order_Table
  		WHERE branch_id = ?
  		ORDER BY order_time DESC
- 		LIMIT 50
  	`, branchID)
 	if err != nil {
 		log.Println("Error fetching branch sale history:", err)

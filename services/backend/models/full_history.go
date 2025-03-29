@@ -16,7 +16,7 @@ type SaleHistory struct {
 }
 
 func GetSaleHistory(c *gin.Context) {
-	rows, err := connect.Db.Query("SELECT order_id, timestamp, user_id, branch_id FROM Sales_Table ORDER BY timestamp DESC LIMIT 50")
+	rows, err := connect.Db.Query("SELECT order_id, timestamp, user_id, branch_id FROM Sales_Table ORDER BY timestamp DESC")
 	if err != nil {
 		log.Println("Error fetching sale history:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve sale history"})

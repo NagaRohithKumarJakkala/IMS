@@ -45,7 +45,7 @@ const OrderDetails = () => {
         onClick={() => router.back()}
         className="mb-4 text-blue-500 underline"
       >
-        &larr; Back to Order History
+        &lArr; Back to Order History
       </button>
       <h2 className="text-yellow-300 text-xl font-bold mb-4">
         Order Details for Order ID: {order_id}

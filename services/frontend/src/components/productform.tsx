@@ -87,7 +87,7 @@ const ProductForm = () => {
           placeholder="Product Name"
           value={formData.product_name}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
 
@@ -100,7 +100,7 @@ const ProductForm = () => {
           placeholder="Product Brand"
           value={formData.product_brand}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
 
@@ -113,7 +113,7 @@ const ProductForm = () => {
           placeholder="Category"
           value={formData.category}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
 
@@ -125,7 +125,7 @@ const ProductForm = () => {
           placeholder="Description"
           value={formData.description}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         ></textarea>
 
@@ -139,7 +139,7 @@ const ProductForm = () => {
           placeholder="MRP"
           value={formData.mrp}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
 
@@ -153,7 +153,7 @@ const ProductForm = () => {
           placeholder="Selling Price (SP)"
           value={formData.selling_price}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-3"
           required
         />
 

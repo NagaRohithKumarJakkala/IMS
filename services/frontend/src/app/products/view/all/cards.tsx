@@ -66,20 +66,22 @@ export default function ProductsPage() {
         <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
           Products
         </h1>
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
-        />
-        <input
-          type="text"
-          placeholder="Search by category..."
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
-        />
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+         <input
+           type="text"
+           placeholder="Search by name..."
+           value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
+          />
+          <input
+            type="text"
+            placeholder="Search by category..."
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
+          />
+        </div>
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}

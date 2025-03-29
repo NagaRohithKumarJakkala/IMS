@@ -52,7 +52,7 @@ export default function SignupPage() {
           <div className="p-8">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-serif font-bold text-gray-800 mb-2">
-                Add a employee
+                Add an Employee
               </h1>
               <p className="text-gray-600">Create a new account</p>
             </div>
@@ -96,8 +96,14 @@ export default function SignupPage() {
                 <select
                   value={levelOfAccess}
                   onChange={(e) => setLevelOfAccess(e.target.value)}
-                  className="w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300"
+
+                  className={`w-full pl-3 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-300 ${
+                    levelOfAccess ? "text-black" : "text-gray-300"
+                  }`}
+
+                  
                 >
+                  <option value="" disabled>Select Level of Access</option>
                   <option value="admin">Admin</option>
                   <option value="staff">Staff</option>
                   <option value="auditor">Auditor</option>

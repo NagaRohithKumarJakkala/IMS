@@ -29,8 +29,7 @@ func GetBranchEntryHistory(c *gin.Context) {
 		SELECT entry_id, entry_time, user_id, branch_id, supplier_id
 		FROM Entry_Table 
 		WHERE branch_id = ? 
-		ORDER BY entry_time DESC 
-		LIMIT 50
+		ORDER BY entry_time DESC
 	`, branchID)
 	if err != nil {
 		log.Println("Error fetching branch entry history:", err)

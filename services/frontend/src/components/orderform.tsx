@@ -150,22 +150,39 @@ const OrderForm = () => {
         Place Order
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="branch_id"
-          placeholder="Branch ID"
-          value={order.branch_id}
-          disabled
-          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
-        />
-        <input
-          type="text"
-          name="user_id"
-          placeholder="User ID"
-          value={order.user_id}
-          disabled
-          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
-        />
+        <div className="flex justify-between items-center gap-4 mb-4">
+          <div className="flex-row items-center gap-4 w-1/2">
+            <label htmlFor="branch_id" className="text-gray-900 font-bold">
+              Branch ID:
+            </label>
+            <div>
+              <input
+                type="text"
+                name="branch_id"
+                placeholder="Branch ID"
+               value={order.branch_id}
+               disabled
+               className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700 mb-3"
+              />
+            </div>
+          </div>
+  
+          <div className="flex-row items-center gap-4 w-1/2">
+            <label htmlFor="user_id" className="text-gray-900 font-bold">
+              User ID:
+            </label>
+            <div>
+              <input
+                type="text"
+                name="user_id"
+                placeholder="User ID"
+                value={order.user_id}
+                disabled
+                className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700 mb-3"
+              />
+            </div>
+          </div>
+        </div>
 
         <table className="w-full border">
           <thead>
@@ -233,7 +250,7 @@ const OrderForm = () => {
         </table>
 
         <p className="text-lg font-bold text-gray-900">
-          Total Cost: ${totalCost.toFixed(2)}
+          Total Cost: ₹{totalCost.toFixed(2)}
         </p>
         <button
           type="button"
