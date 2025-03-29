@@ -70,11 +70,6 @@ func LoginHandler(c *gin.Context) {
 		return
 	}
 
-	// Debugging: Log password hashes
-	log.Println("Stored Hash:", storedPasswordHash)
-	log.Println("Entered Password:", req.Password)
-
-	// Compare hashed password
 	err = bcrypt.CompareHashAndPassword([]byte(storedPasswordHash), []byte(req.Password))
 	if err != nil {
 		log.Println("Login Error: Password mismatch")

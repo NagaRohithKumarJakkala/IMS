@@ -1,33 +1,85 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { getSession } from "next-auth/react";
 import { fetchProtectedData } from "@/utils/api";
 
-type OrderItem = {
-  product_id: string;
-  product_name: string;
-  quantity_of_item: number;
-  selling_price: number;
-};
-
-type OrderData = {
-  branch_id: string;
-  user_id: string;
-  items: OrderItem[];
-};
-
 const OrderForm = () => {
-  const [order, setOrder] = useState<OrderData>({
-    branch_id: "",
+  const searchParams = useSearchParams();
+  const branch_id = searchParams.get("branch_id");
+
+  const [order, setOrder] = useState({
+    branch_id: branch_id || "",
     user_id: "",
     items: [
       {
         product_id: "",
         product_name: "",
-        quantity_of_item: 1,
-        selling_price: 0,
+        quantity_of_item: "",
+        selling_price: "",
       },
     ],
   });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const session = await getSession();
+      if (session?.user?.id) {
+        setOrder((prevOrder) => ({
+          ...prevOrder,
+          user_id: session.user.id,
+        }));
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const fetchProductDetails = async (productID, index) => {
+    if (!productID) return;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/product/${productID}`,
+      );
+      if (!response.ok) throw new Error("Product not found");
+
+      const data = await response.json();
+      const { product } = data;
+
+      setOrder((prevOrder) => {
+        const updatedItems = [...prevOrder.items];
+        updatedItems[index].product_name = product.product_name;
+        updatedItems[index].selling_price = product.selling_price;
+        return { ...prevOrder, items: updatedItems };
+      });
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+
+  const [typingTimeout, setTypingTimeout] = useState(null);
+
+  const handleChange = (e, index = null) => {
+    const { name, value } = e.target;
+    if (index !== null) {
+      const updatedItems = [...order.items];
+      updatedItems[index][name] = value;
+      setOrder({ ...order, items: updatedItems });
+
+      if (name === "product_id") {
+        if (typingTimeout) clearTimeout(typingTimeout);
+
+        const newTimeout = setTimeout(() => {
+          fetchProductDetails(value, index);
+        }, 800);
+
+        setTypingTimeout(newTimeout);
+      }
+    } else {
+      setOrder({ ...order, [name]: value });
+    }
+  };
 
   const addRow = () => {
     setOrder({
@@ -37,92 +89,65 @@ const OrderForm = () => {
         {
           product_id: "",
           product_name: "",
-          quantity_of_item: 1,
-          selling_price: 0,
+          quantity_of_item: "",
+          selling_price: "",
         },
       ],
     });
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number | null = null,
-  ) => {
-    const { name, value } = e.target;
-
-    if (index !== null) {
-      const updatedItems = [...order.items];
-      updatedItems[index] = {
-        ...updatedItems[index],
-        [name]:
-          name === "quantity_of_item" || name === "selling_price"
-            ? value === ""
-              ? 0
-              : Number(value) // Ensures numeric values
-            : value,
-      };
-      setOrder({ ...order, items: updatedItems });
-    } else {
-      setOrder({
-        ...order,
-        [name]: name === "user_id" ? value.replace(/\D/g, "") : value, // Ensures user_id remains numeric
-      });
-    }
-  };
-
-  const removeRow = (index: number) => {
+  const removeRow = (index) => {
     setOrder({ ...order, items: order.items.filter((_, i) => i !== index) });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formattedOrder = {
-      ...order,
-      user_id: parseInt(order.user_id, 10),
-      items: order.items.map(({ product_name, ...item }) => ({
-        ...item,
-        quantity_of_item: parseInt(item.quantity_of_item.toString(), 10),
-        selling_price: parseFloat(item.selling_price.toString()),
-      })),
-    };
 
     try {
       const data = await fetchProtectedData("order", "", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formattedOrder),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          branch_id: order.branch_id,
+          user_id: parseInt(order.user_id, 10),
+          items: order.items.map(({ product_name, ...rest }) => ({
+            product_id: rest.product_id,
+            quantity_of_item: parseInt(rest.quantity_of_item, 10),
+            selling_price: parseFloat(rest.selling_price),
+          })),
+        }),
       });
-      alert("Order submitted successfully: " + JSON.stringify(data));
-
-      // Reset form after submission
+      alert("Order placed successfully: " + JSON.stringify(data));
       setOrder({
-        branch_id: "",
-        user_id: "",
+        branch_id: branch_id || "",
+        user_id: order.user_id,
         items: [
           {
             product_id: "",
             product_name: "",
-            quantity_of_item: 1,
-            selling_price: 0,
+            quantity_of_item: "",
+            selling_price: "",
           },
         ],
       });
     } catch (error) {
-      console.error("Error:", error);
-      alert("Error submitting order");
+      console.error("Error placing order:", error);
+      alert("Error placing order, please try again.");
     }
   };
 
-  const totalCost = order.items.reduce(
-    (sum, item) => sum + (item.quantity_of_item * item.selling_price || 0),
-    0,
-  );
+  const totalCost = order.items.reduce((sum, item) => {
+    const cost =
+      parseFloat(item.selling_price) * parseInt(item.quantity_of_item) || 0;
+    return sum + cost;
+  }, 0);
 
   return (
     <div className="p-5 border rounded-xl shadow-xl bg-white max-w-full mx-auto">
-      <h2 className="text-2xl text-slate-900 font-serif font-extrabold mb-4">
-        Place New Order
+      <h2 className="text-2xl text-gray-900 font-serif font-extrabold mb-4">
+        Place Order
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
@@ -130,120 +155,90 @@ const OrderForm = () => {
           name="branch_id"
           placeholder="Branch ID"
           value={order.branch_id}
-          onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
-          required
+          disabled
+          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
         />
         <input
           type="text"
           name="user_id"
           placeholder="User ID"
           value={order.user_id}
-          onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
-          required
+          disabled
+          className="border w-full px-3 py-2 rounded-md shadow-md bg-gray-200 text-gray-700"
         />
-        <div className="overflow-x-auto">
-          <table className="min-w-full border border-transparent">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Product ID
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Product Name
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Quantity
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Selling Price
-                </th>
-                <th className="border border-gray-300 text-black font-serif px-4 py-2">
-                  Total
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {order.items.map((item, index) => (
-                <tr key={index} className="border-b">
-                  <td className="border px-2 py-1">
-                    <input
-                      type="text"
-                      name="product_id"
-                      value={item.product_id}
-                      onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
-                      required
-                    />
-                  </td>
-                  <td className="border px-2 py-1">
-                    <input
-                      type="text"
-                      name="product_name"
-                      value={item.product_name}
-                      onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
-                      disabled
-                    />
-                  </td>
-                  <td className="border px-2 py-1">
-                    <input
-                      type="number"
-                      name="quantity_of_item"
-                      min="1"
-                      value={item.quantity_of_item}
-                      onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
-                      required
-                    />
-                  </td>
-                  <td className="border px-2 py-1">
-                    <input
-                      type="number"
-                      name="selling_price"
-                      min="0"
-                      step="0.01"
-                      value={item.selling_price}
-                      onChange={(e) => handleChange(e, index)}
-                      className="text-black font-sans w-full px-2 py-1 border-gray-500 shadow-md rounded-lg"
-                      required
-                    />
-                  </td>
-                  <td className="text-black font-mono border px-2 py-1">
-                    {(item.quantity_of_item * item.selling_price).toFixed(2)}
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => removeRow(index)}
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                      X
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              <tr>
-                <td
-                  colSpan="4"
-                  className="text-black text-right font-bold py-2 px-4 border-t"
-                >
-                  Total Cost:
+
+        <table className="w-full border">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border px-2 py-1 text-gray-900">Product ID</th>
+              <th className="border px-2 py-1 text-gray-900">Product Name</th>
+              <th className="border px-2 py-1 text-gray-900">Quantity</th>
+              <th className="border px-2 py-1 text-gray-900">Selling Price</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, index) => (
+              <tr key={index} className="border-b">
+                <td className="border px-2 py-1">
+                  <input
+                    type="text"
+                    name="product_id"
+                    value={item.product_id}
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    className="w-full px-2 py-1 border rounded text-gray-900"
+                  />
                 </td>
-                <td className="text-black font-mono font-bold py-2 px-4 border-t">
-                ₹{totalCost.toFixed(2)}
+                <td className="border px-2 py-1">
+                  <input
+                    type="text"
+                    name="product_name"
+                    value={item.product_name}
+                    disabled
+                    className="w-full px-2 py-1 border rounded bg-gray-200 text-gray-700"
+                  />
                 </td>
-                <td></td>
+                <td className="border px-2 py-1">
+                  <input
+                    type="number"
+                    name="quantity_of_item"
+                    value={item.quantity_of_item}
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    className="w-full px-2 py-1 border rounded text-gray-900"
+                  />
+                </td>
+                <td className="border px-2 py-1">
+                  <input
+                    type="number"
+                    name="selling_price"
+                    value={item.selling_price}
+                    onChange={(e) => handleChange(e, index)}
+                    required
+                    className="w-full px-2 py-1 border rounded text-gray-900"
+                  />
+                </td>
+                <td>
+                  <button
+                    onClick={() => removeRow(index)}
+                    className="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                  >
+                    X
+                  </button>
+                </td>
               </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
+
+        <p className="text-lg font-bold text-gray-900">
+          Total Cost: ${totalCost.toFixed(2)}
+        </p>
         <button
           type="button"
           onClick={addRow}
-          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800 hover:scale-95 transition duration-200" 
+          className="w-full bg-green-500 text-white font-extrabold py-2 rounded-xl hover:bg-green-800 hover:scale-95 transition duration-200"
         >
           + Add Item
         </button>

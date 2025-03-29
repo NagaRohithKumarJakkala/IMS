@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchProtectedData } from "@/utils/api";
-
+import Link from "next/link";
 export default function SupplierList() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ export default function SupplierList() {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchProtectedData("get-suppliers");
+        const data = await fetchProtectedData("suppliers");
         setSuppliers(data);
       } catch (error) {
         console.error("Error fetching suppliers:", error);
@@ -49,7 +49,12 @@ export default function SupplierList() {
               suppliers.map((supplier) => (
                 <tr key={supplier.supplier_id} className="hover:bg-gray-200">
                   <td className="py-2 px-4 border-b text-center text-gray-900">
-                    {supplier.supplier_id}
+                    <Link
+                      href={`/supplier/${supplier.supplier_id}`}
+                      className="text-blue-500 underline"
+                    >
+                      {supplier.supplier_id}
+                    </Link>
                   </td>
                   <td className="py-2 px-4 border-b text-center text-gray-900">
                     {supplier.supplier_name}

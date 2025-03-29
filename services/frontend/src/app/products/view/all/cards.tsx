@@ -23,6 +23,7 @@ export default function ProductsPage() {
   const branchName = searchParams?.get("branch_name") || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,18 +35,20 @@ export default function ProductsPage() {
       setError(null);
 
       try {
-        const queryParams = query.trim()
-          ? `&query=${encodeURIComponent(query)}`
-          : ``;
+        const queryParams = [];
+        if (query.trim())
+          queryParams.push(`query=${encodeURIComponent(query)}`);
+        if (category.trim())
+          queryParams.push(`category=${encodeURIComponent(category)}`);
 
         const data = await fetchProtectedData<{ products: Product[] }>(
-          query.trim() ? "products-by-name" : "allproducts",
-          queryParams,
+          queryParams.length > 0 ? "filtered-products" : "products",
+          queryParams.length > 0 ? `${queryParams.join("&")}` : "",
         );
         setProducts(data.products || []);
       } catch (err: any) {
         console.error("Error fetching products:", err);
-        setError(err.message);
+        setError("No products found.");
         setProducts([]);
       } finally {
         setLoading(false);
@@ -54,19 +57,27 @@ export default function ProductsPage() {
 
     const debounceFetch = setTimeout(fetchProducts, 500);
     return () => clearTimeout(debounceFetch);
-  }, [query, branchId]);
+  }, [query, category, branchId]);
 
   return (
     <>
       <TopBar />
       <div className="bg-gradient-to-br from-gray-100 to-green-200 min-h-screen bg-gray-200 p-6">
-      <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
-          Products</h1>
+        <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
+          Products
+        </h1>
         <input
           type="text"
           placeholder="Search by name..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
+        />
+        <input
+          type="text"
+          placeholder="Search by category..."
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
           className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
         />
 
@@ -90,7 +101,9 @@ export default function ProductsPage() {
                     Brand: {product.product_brand}
                   </p>
                   <p className="text-gray-500">Category: {product.category}</p>
-                  <p className="text-gray-700">Description: {product.description}</p>
+                  <p className="text-gray-700">
+                    Description: {product.description}
+                  </p>
                   <p className="text-gray-700">
                     MRP: ₹{product.mrp.toFixed(2)}
                   </p>

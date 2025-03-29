@@ -168,3 +168,82 @@ func UpdateProduct(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Product updated successfully"})
 }
+func GetProductsByCategory(c *gin.Context) {
+	category := c.Query("category") // Get category from query string
+
+	if category == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category is required"})
+		return
+	}
+
+	var products []Product
+	query := "SELECT product_id, product_brand, product_name, description, category, mrp, selling_price FROM Product_Table WHERE category = ?"
+	rows, err := connect.Db.Query(query, category)
+
+	if err != nil {
+		log.Println("Error fetching products by category:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductBrand, &product.ProductName,
+			&product.Description, &product.Category, &product.MRP, &product.SellingPrice,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			continue
+		}
+		products = append(products, product)
+	}
+
+	if len(products) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No products found in this category"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
+}
+
+func GetProductsByCategoryAndName(c *gin.Context) {
+	category := c.Query("category")
+	queryParam := c.Query("query")              // Get search term from query string
+	log.Println("Received category:", category) // Debugging log
+
+	if category == "" && queryParam == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category and search query are required"})
+		return
+	}
+
+	var products []Product
+	query := "SELECT product_id, product_brand, product_name, description, category, mrp, selling_price FROM Product_Table WHERE category LIKE ? AND product_name LIKE ?"
+	rows, err := connect.Db.Query(query, "%"+category+"%", "%"+queryParam+"%") // Use LIKE for partial matching
+
+	if err != nil {
+		log.Println("Error fetching products:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Product
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductBrand, &product.ProductName,
+			&product.Description, &product.Category, &product.MRP, &product.SellingPrice,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			continue
+		}
+		products = append(products, product)
+	}
+
+	if len(products) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No products found for the given category and search query"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
+}

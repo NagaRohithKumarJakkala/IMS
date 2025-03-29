@@ -52,7 +52,9 @@ export default function SignupPage() {
         <div className="bg-white shadow-2xl rounded-2xl overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-serif font-bold text-gray-800 mb-2">Join Us</h1>
+              <h1 className="text-3xl font-serif font-bold text-gray-800 mb-2">
+                Join Us
+              </h1>
               <p className="text-gray-600">Create a new account</p>
             </div>
 

@@ -22,7 +22,8 @@ export default function ProductsPage() {
   const branchId = searchParams?.get("branch_id") || "";
   const branchName = searchParams?.get("branch_name") || "";
   const [products, setProducts] = useState<Product[]>([]);
-  const [query, setQuery] = useState("");
+  const [nameQuery, setNameQuery] = useState("");
+  const [categoryQuery, setCategoryQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,12 +35,18 @@ export default function ProductsPage() {
       setError(null);
 
       try {
-        const queryParams = query.trim()
-          ? `branch_id=${encodeURIComponent(branchId)}&query=${encodeURIComponent(query)}`
-          : `branch_id=${encodeURIComponent(branchId)}`;
+        let queryParams = `branch_id=${encodeURIComponent(branchId)}`;
+        if (nameQuery.trim()) {
+          queryParams += `&query=${encodeURIComponent(nameQuery)}`;
+        }
+        if (categoryQuery.trim()) {
+          queryParams += `&category=${encodeURIComponent(categoryQuery)}`;
+        }
 
         const data = await fetchProtectedData<{ products: Product[] }>(
-          query.trim() ? "product-in-branch" : "product-all-in-branch",
+          nameQuery.trim() || categoryQuery.trim()
+            ? "filtered-products-in-branch"
+            : "products-in-branch",
           queryParams,
         );
         setProducts(data.products || []);
@@ -54,7 +61,7 @@ export default function ProductsPage() {
 
     const debounceFetch = setTimeout(fetchProducts, 500);
     return () => clearTimeout(debounceFetch);
-  }, [query, branchId]);
+  }, [nameQuery, categoryQuery, branchId]);
 
   return (
     <>
@@ -63,13 +70,22 @@ export default function ProductsPage() {
         <h1 className="font-sans text-black text-2xl font-bold text-center mb-6">
           Products in {branchName}
         </h1>
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="font-sans text-black w-full p-2 mb-4 border rounded-xl"
-        />
+        <div className="flex flex-col md:flex-row gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={nameQuery}
+            onChange={(e) => setNameQuery(e.target.value)}
+            className="font-sans text-black w-full p-2 border rounded-xl"
+          />
+          <input
+            type="text"
+            placeholder="Search by category..."
+            value={categoryQuery}
+            onChange={(e) => setCategoryQuery(e.target.value)}
+            className="font-sans text-black w-full p-2 border rounded-xl"
+          />
+        </div>
 
         {loading && <p className="text-center text-gray-600">Loading...</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
@@ -91,8 +107,12 @@ export default function ProductsPage() {
                     Brand: {product.product_brand}
                   </p>
                   <p className="text-gray-500">Category: {product.category}</p>
-                  <p className="text-gray-700">Description:{product.description}</p>
-                  <p className="text-gray-700"> MRP: ₹{product.mrp.toFixed(2)}</p>
+                  <p className="text-gray-700">
+                    Description: {product.description}
+                  </p>
+                  <p className="text-gray-700">
+                    MRP: ₹{product.mrp.toFixed(2)}
+                  </p>
                   <p className="text-gray-700">Quantity: {product.quantity}</p>
                   <p className="text-green-600 font-bold">
                     Selling Price: ₹{product.selling_price.toFixed(2)}

@@ -15,6 +15,8 @@ const ProductForm = () => {
     selling_price: "",
   });
 
+  const [message, setMessage] = useState("");
+
   const createProduct = async (formData) => {
     try {
       const data = await fetchProtectedData("products", "", {
@@ -24,10 +26,10 @@ const ProductForm = () => {
         },
         body: JSON.stringify(formData),
       });
-      alert("Product created: " + JSON.stringify(data));
+      setMessage("Product created successfully!");
     } catch (error) {
       console.error("Error creating product:", error);
-      alert("Error creating product");
+      setMessage("Error creating product");
     }
   };
 
@@ -63,24 +65,22 @@ const ProductForm = () => {
         Add Product
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
+        <label htmlFor="product_id" className="text-gray-900 font-bold mb-1">
+          Product ID
+        </label>
         <input
           type="text"
           name="product_id"
           placeholder="Product ID"
           value={formData.product_id}
           onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans mb-1"
           required
         />
-        <input
-          type="text"
-          name="product_brand"
-          placeholder="Product Brand"
-          value={formData.product_brand}
-          onChange={handleChange}
-          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
-          required
-        />
+
+        <label htmlFor="product_name" className="text-gray-900 font-bold my-1">
+          Product Name
+        </label>
         <input
           type="text"
           name="product_name"
@@ -90,6 +90,23 @@ const ProductForm = () => {
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
+
+        <label htmlFor="product_brand" className="text-gray-900 font-bold my-1">
+          Product Brand
+        </label>
+        <input
+          type="text"
+          name="product_brand"
+          placeholder="Product Brand"
+          value={formData.product_brand}
+          onChange={handleChange}
+          className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
+          required
+        />
+
+        <label htmlFor="category" className="text-gray-900 font-bold my-1">
+          Category
+        </label>
         <input
           type="text"
           name="category"
@@ -99,6 +116,10 @@ const ProductForm = () => {
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
+
+        <label htmlFor="description" className="text-gray-900 font-bold my-1">
+          Description
+        </label>
         <textarea
           name="description"
           placeholder="Description"
@@ -107,6 +128,10 @@ const ProductForm = () => {
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         ></textarea>
+
+        <label htmlFor="mrp" className="text-gray-900 font-bold my-1">
+          MRP
+        </label>
         <input
           type="number"
           step="0.01"
@@ -117,6 +142,10 @@ const ProductForm = () => {
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
+
+        <label htmlFor="selling_price" className="text-gray-900 font-bold my-1">
+          Selling Price
+        </label>
         <input
           type="number"
           step="0.01"
@@ -127,6 +156,9 @@ const ProductForm = () => {
           className="border-gray-500 w-full px-3 py-2 border rounded-md shadow-md text-black font-sans"
           required
         />
+
+        {message && <p className="text-green-600 font-bold">{message}</p>}
+
         <button
           type="submit"
           className="w-full bg-orange-500 text-white font-extrabold py-2 rounded-xl hover:bg-orange-800 hover:scale-105 hover:shadow-2xl transition duration-300"

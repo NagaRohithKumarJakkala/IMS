@@ -16,7 +16,6 @@ func post(router *gin.Engine) {
 	adminGroup := router.Group("/")
 	adminGroup.Use(middleware.AuthMiddleware("admin"))
 	{
-		adminGroup.POST("/products", models.InsertProduct)
 		adminGroup.POST("/branches", models.InsertBranch)
 		adminGroup.POST("/supplier", models.InsertSupplier)
 	}
@@ -25,14 +24,15 @@ func post(router *gin.Engine) {
 	staffGroup := router.Group("/")
 	staffGroup.Use(middleware.AuthMiddleware("staff", "admin"))
 	{
+		staffGroup.POST("/products", models.InsertProduct)
 		staffGroup.POST("/entry", models.InsertEntry)
+		staffGroup.POST("/order", models.InsertOrder)
 	}
 
 	// Customers can create orders
 	customerGroup := router.Group("/")
 	customerGroup.Use(middleware.AuthMiddleware("customer", "staff", "admin"))
 	{
-		customerGroup.POST("/order", models.InsertOrder)
 	}
 
 	// Auditors have no write access

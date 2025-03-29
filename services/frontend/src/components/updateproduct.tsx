@@ -40,20 +40,24 @@ const ProductUpdateForm = () => {
   };
 
   useEffect(() => {
-    if (formData.product_id && !isFetched) {
+    if (formData.product_id) {
+      setIsFetched(false);
       if (typingTimeout) clearTimeout(typingTimeout);
-      setTypingTimeout(
-        setTimeout(() => {
-          fetchProductDetails(formData.product_id);
-        }, 1000),
-      );
+
+      const timeout = setTimeout(() => {
+        fetchProductDetails(formData.product_id);
+      }, 1000);
+
+      setTypingTimeout(timeout);
+
+      return () => clearTimeout(timeout); // Cleanup on unmount or re-run
     }
   }, [formData.product_id]);
 
   const updateProduct = async (formData) => {
     try {
       const response = await fetchProtectedData(
-        `update-product/${formData.product_id}`,
+        `product/${formData.product_id}`,
         "",
         {
           method: "PUT",

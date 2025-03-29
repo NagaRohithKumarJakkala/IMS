@@ -137,3 +137,91 @@ func GetProductsByNameInBranch(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"products": products})
 }
+
+func GetProductsByCategoryInBranch(c *gin.Context) {
+	branchID := c.Query("branch_id")
+	category := c.Query("category")
+
+	if branchID == "" || category == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Branch ID and category are required"})
+		return
+	}
+
+	var products []ProductDetails
+	query := `
+		SELECT p.product_id, p.product_name, p.product_brand, p.category, p.description, p.mrp, p.selling_price, s.quantity_of_item 
+		FROM Product_Table p 
+		JOIN Stock_Table s ON p.product_id = s.product_id 
+		WHERE s.branch_id = ? AND p.category LIKE ?`
+
+	rows, err := connect.Db.Query(query, branchID, "%"+category+"%")
+	if err != nil {
+		log.Println("Error fetching products by category:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product ProductDetails
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductName, &product.ProductBrand, &product.Category,
+			&product.Description, &product.MRP, &product.SellingPrice, &product.Quantity,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			continue
+		}
+		products = append(products, product)
+	}
+
+	if len(products) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No products found in this category"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
+}
+func GetProductsByCategoryAndNameInBranch(c *gin.Context) {
+	branchID := c.Query("branch_id")
+	category := c.Query("category")
+	queryParam := c.Query("query")
+
+	if branchID == "" || (category == "" && queryParam == "") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Branch ID, category, and search query are required"})
+		return
+	}
+
+	var products []ProductDetails
+	query := `
+        SELECT p.product_id, p.product_name, p.product_brand, p.category, p.description, p.mrp, p.selling_price, s.quantity_of_item 
+        FROM Product_Table p 
+        JOIN Stock_Table s ON p.product_id = s.product_id 
+        WHERE s.branch_id = ? AND p.category LIKE ? AND p.product_name LIKE ?`
+
+	rows, err := connect.Db.Query(query, branchID, "%"+category+"%", "%"+queryParam+"%")
+	if err != nil {
+		log.Println("Error fetching products by category and name:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product ProductDetails
+		if err := rows.Scan(
+			&product.ProductID, &product.ProductName, &product.ProductBrand, &product.Category,
+			&product.Description, &product.MRP, &product.SellingPrice, &product.Quantity,
+		); err != nil {
+			log.Println("Error scanning product:", err)
+			continue
+		}
+		products = append(products, product)
+	}
+
+	if len(products) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"message": "No products found for the given category and search query in this branch"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"products": products})
+}

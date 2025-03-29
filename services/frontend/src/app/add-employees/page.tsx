@@ -42,6 +42,7 @@ export default function SignupPage() {
     } finally {
       setIsLoading(false);
     }
+    router.push("/login");
   };
 
   return (
@@ -100,7 +101,6 @@ export default function SignupPage() {
                   <option value="admin">Admin</option>
                   <option value="staff">Staff</option>
                   <option value="auditor">Auditor</option>
-                  <option value="supplier">Supplier</option>
                 </select>
               </div>
 

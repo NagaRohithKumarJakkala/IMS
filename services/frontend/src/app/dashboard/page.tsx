@@ -32,7 +32,7 @@ export default function Home() {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchProtectedData("announcments");
+        const data = await fetchProtectedData("announcements");
         setAnnouncements(data);
       } catch (error) {
         console.error("Error fetching announcements:", error);
@@ -84,7 +84,9 @@ export default function Home() {
                 */}
               </>
             )}
-            {(accessLevel === "admin" || accessLevel === "auditor") && (
+            {(accessLevel === "admin" ||
+              accessLevel === "auditor" ||
+              accessLevel === "staff") && (
               <>
                 {/*<NavLink
                   href={`/analysis?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
@@ -101,7 +103,7 @@ export default function Home() {
                 />
               </>
             )}
-            {(accessLevel === "admin" || accessLevel === "auditor") && (
+            {accessLevel === "admin" && (
               <>
                 <NavLink
                   href={`/add-employees?branch_id=${branchId}&branch_name=${branchName}&user_id=${userId}`}
